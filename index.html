@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apigee API Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+            color: #1f2937; /* Dark gray text */
+            line-height: 1.6;
+            scroll-behavior: smooth; /* Smooth scrolling for navigation */
+        }
+        .container {
+            max-width: 960px;
+            margin-left: auto; /* Default margin for larger screens */
+            margin-right: auto;
+            padding: 2rem;
+        }
+        @media (min-width: 1024px) { /* Adjust for desktop screens with sidebar */
+            .container {
+                margin-left: 18rem; /* Space for fixed sidebar */
+            }
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #111827;
+        }
+        h1 { font-size: 2.5rem; }
+        h2 { font-size: 2rem; }
+        h3 { font-size: 1.75rem; }
+        h4 { font-size: 1.5rem; }
+        h5 { font-size: 1.25rem; }
+        p {
+            margin-bottom: 1rem;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        ol {
+            list-style-type: decimal;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        strong {
+            font-weight: 600;
+        }
+        em {
+            font-style: italic;
+        }
+        a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .section {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 0.75rem; /* More rounded corners */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Stronger shadow */
+            margin-bottom: 2rem;
+        }
+        .code-block {
+            background-color: #1f2937;
+            color: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            font-size: 0.875rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+        th, td {
+            border: 1px solid #e5e7eb;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th {
+            background-color: #f9fafb;
+            font-weight: 600;
+        }
+
+        /* Sidebar specific styles */
+        .sidebar {
+            width: 16rem; /* Tailwind w-64 */
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(-100%); /* Hidden by default on small screens */
+            z-index: 1000;
+        }
+        .sidebar.open {
+            transform: translateX(0); /* Visible when open */
+        }
+        @media (min-width: 1024px) { /* Always visible on large screens */
+            .sidebar {
+                transform: translateX(0);
+            }
+        }
+
+        /* Hamburger menu icon */
+        .hamburger {
+            display: block; /* Visible on small screens */
+            cursor: pointer;
+            z-index: 1001; /* Above sidebar */
+        }
+        @media (min-width: 1024px) {
+            .hamburger {
+                display: none; /* Hidden on large screens */
+            }
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8 md:p-12 lg:p-0 bg-gradient-to-br from-blue-50 to-indigo-100">
+
+    <!-- Hamburger Menu Button (for small screens) -->
+    <button id="hamburger-button" class="lg:hidden fixed top-4 left-4 p-2 rounded-full bg-blue-700 text-white shadow-lg">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <nav id="sidebar" class="sidebar fixed top-0 left-0 h-full bg-gray-200 text-gray-800 p-4 overflow-y-auto shadow-xl lg:block">
+        <h3 class="text-xl font-bold mb-6 text-blue-700">Apigee Sections</h3>
+        <ul>
+            <li class="mb-2"><a href="#apigee-overview" class="block py-2 px-4 rounded-md hover:bg-gray-300 transition-colors duration-200">1 Apigee Overview</a></li>
+            <li class="mb-2"><a href="#api-first-and-openapi" class="block py-2 px-4 rounded-md hover:bg-gray-300 transition-colors duration-200">2 API-First and OpenAPI</a></li>
+            <li class="mb-2"><a href="#api-proxies" class="block py-2 px-4 rounded-md hover:bg-gray-300 transition-colors duration-200">3 API Proxies</a></li>
+            <li class="mb-2"><a href="#api-products" class="block py-2 px-4 rounded-md hover:bg-gray-300 transition-colors duration-200">4 API Products</a></li>
+            <li class="mb-2"><a href="#auth-authz-oauth" class="block py-2 px-4 rounded-md hover:bg-gray-300 transition-colors duration-200">5 Authentication, Authorization, and OAuth</a></li>
+            <li class="mb-2"><a href="#content-transport-platform-security" class="block py-2 px-4 rounded-md hover:bg-gray-300 transition-colors duration-200">6 Content, Transport, and Platform Security</a></li>
+            <li class="mb-2"><a href="#api-mediation" class="block py-2 px-4 rounded-md hover:bg-gray-300 transition-colors duration-200">7 API Mediation</a></li>
+            <li class="mb-2"><a href="#api-traffic-management" class="block py-2 px-4 rounded-md hover:bg-gray-300 transition-colors duration-200">8 API Traffic Management</a></li>
+            <li class="mb-2"><a href="#api-publishing-developer-portals" class="block py-2 px-4 rounded-md hover:bg-gray-300 transition-colors duration-200">9 API Publishing and Developer Portals</a></li>
+            <li class="mb-2"><a href="#logging-analytics" class="block py-2 px-4 rounded-md hover:bg-gray-300 transition-colors duration-200">10 Logging and Analytics</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <header class="text-center mb-8 bg-blue-700 text-white p-8 rounded-xl shadow-lg">
+            <h1 class="text-4xl font-bold text-orange-500">Apigee API Training</h1>
+            <p class="text-lg text-blue-100">Comprehensive Guide to API Management with Apigee</p>
+        </header>
+
+        <div class="section" id="apigee-overview">
+            <h2 class="text-2xl font-semibold mb-4">1 Apigee Overview</h2>
+            <h3 class="text-xl font-medium mb-3">API-First and OpenAPI Specifications</h3>
+            <p>This document outlines key concepts related to REST APIs, API-first development, and OpenAPI specifications, based on the provided material.</p>
+
+            <h4 class="text-lg font-medium mb-2">REST API Design (Basics)</h4>
+            <p>REST (Representational State Transfer) is an architectural style for designing networked applications. It is not a standard, but a set of guidelines.</p>
+
+            <h5 class="text-base font-medium mb-1">Use of HTTP Verbs for CRUD Operations</h5>
+            <p>HTTP verbs are used to specify the type of operation performed on a resource. The four basic functions of persistent storage are Create, Read, Update, and Delete, commonly referred to as CRUD operations.</p>
+            <ul class="list-disc ml-6">
+                <li><strong>POST (Create):</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Used to create a new resource.</li>
+                        <li>For a collection (e.g., '/dogs'), 'POST/dogs' creates a new dog with an automatically generated ID.</li>
+                        <li>It is not a safe method (modifies state) and not idempotent (repeating the call creates multiple resources).</li>
+                    </ul>
+                </li>
+                <li><strong>GET (Read):</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Used to retrieve information about a collection of resources (e.g., '/dogs') or a single resource (e.g., '/dogs/1234').</li>
+                        <li>It should not update the state of the resource (safe method).</li>
+                        <li>It is idempotent (repeating the call produces the same result).</li>
+                    </ul>
+                </li>
+                <li><strong>PUT/PATCH (Update):</strong>
+                    <ul class="list-circle ml-6">
+                        <li><strong>PUT:</strong>
+                            <ul class="list-square ml-6">
+                                <li>Used to update an existing resource (e.g., `PUT/dogs/1234`).</li>
+                                <li>Can also be used to bulk update a collection (e.g., `PUT/dogs`), though this is often not recommended due to risk of accidental mass updates.</li>
+                                <li>Not a safe method (modifies state).</li>
+                                <li>Idempotent (a second identical 'PUT' call leaves the resource in the same state).</li>
+                                <li>Traditionally, 'PUT' completely replaces a resource with the provided payload. However, many public REST APIs use 'PUT' with 'PATCH' semantics (partial updates).</li>
+                            </ul>
+                        </li>
+                        <li><strong>PATCH:</strong>
+                            <ul class="list-square ml-6">
+                                <li>Used to modify only a subset of a resource (partial update).</li>
+                                <li>Fields with a value are added or modified; fields specified as 'null' are deleted; unmentioned fields are unchanged.</li>
+                                <li>Consider 'PATCH' for new APIs when partial updates are needed.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>DELETE (Delete):</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Used to delete a resource (e.g., `DELETE /dogs/1234`).</li>
+                        <li>Can also be used to delete an entire collection or matched resources (e.g., `DELETE /dogs`), though this is often not allowed due to high risk.</li>
+                        <li>Not a safe method (modifies state).</li>
+                        <li>Idempotent (a second identical 'DELETE' has no effect as the resource is already gone).</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h5 class="text-base font-medium mb-1">Keeping Verbs out of URLs</h5>
+            <p>In REST APIs, URLs should represent noun-oriented resources, not operations.</p>
+            <ul class="list-disc ml-6">
+                <li>Anti-pattern: `POST/UpdateStudent?id=15`, `/getDog`</li>
+                <li>Recommended: Use primary HTTP verbs (GET, POST, PUT/PATCH, DELETE) with noun-oriented resources (e.g., '/students/15').</li>
+                <li>For non-CRUD operations, consider using `POST` with a query parameter to specify the action (e.g., `POST/dogs/1234?action=walk`).</li>
+            </ul>
+
+            <h5 class="text-base font-medium mb-1">Sweep Complexity Behind the '?' (Query Parameters)</h5>
+            <p>Use query parameters for filtering, searching, and specifying partial responses to improve developer experience and API performance.</p>
+            <ul class="list-disc ml-6">
+                <li>Example: Instead of multiple calls to find specific dogs (e.g., 'GET /parks' then 'GET /parks/{parkId}/dogs' then 'GET /dogs/{dogId}' and manual filtering), use `GET /dogs?location=park&color=brown&state=running`.</li>
+                <li>Partial Responses: Allow developers to select specific fields to return in a response using query parameters (e.g., `GET /employees/5678?fields=id,fullName,geo.latitude`). This is beneficial for low-bandwidth apps or large payloads.</li>
+            </ul>
+
+            <h4 class="text-lg font-medium mb-2">API-First Development</h4>
+            <p>API-first development is a strategy where APIs are designed by prioritizing the needs of the app developers who will consume the API.</p>
+            <h5 class="text-base font-medium mb-1">Core Principles</h5>
+            <ul class="list-disc ml-6">
+                <li>Design from the perspective of API users: Focus on usability and customer use cases, rather than simply exposing existing backend implementations.</li>
+                <li>Design API interface first: The API contract should be defined before implementation begins.</li>
+            </ul>
+            <h5 class="text-base font-medium mb-1">Benefits of API-First Development</h5>
+            <ul class="list-disc ml-6">
+                <li>Shake out issues early: Uncover business and technical gaps with customers and stakeholders before development, avoiding wasted effort on unneeded features or poorly designed backend systems.</li>
+                <li>Promote consistency, usability, and best practices: Early review cycles ensure APIs are consistent, easy to use, and follow best practices, increasing adoption.</li>
+                <li>Increase ability to do parallel development: App developers can design and validate use cases using the API contract even while the API implementation is in progress.</li>
+            </ul>
+
+            <h4 class="text-lg font-medium mb-2">OpenAPI Specifications</h4>
+            <h5 class="text-base font-medium mb-1">What an OpenAPI Specification Does</h5>
+            <ul class="list-disc ml-6">
+                <li>Describes API interface (contract): Defines how apps can use the API.</li>
+                <li>Easily human- and machine-readable: Written in JSON or YAML format.</li>
+                <li>Defines available paths and allowed operations: Specifies endpoints (e.g., `/employees`, `/employees/{id}`) and the HTTP methods allowed for each.</li>
+                <li>Specifies request and response format for each operation:
+                    <ul class="list-circle ml-6">
+                        <li>Includes success and failure response codes and payload formats.</li>
+                        <li>Describes authentication details.</li>
+                    </ul>
+                </li>
+            </ul>
+            <p>OpenAPI specifications are leveraged in Apigee for several purposes:</p>
+            <ul class="list-disc ml-6">
+                <li>Interactive documentation in developer portals: Provides app developers with live documentation and the ability to try out API calls, streamlining the learning process.</li>
+                <li>Generate API proxy stubs: Automatically creates Apigee API proxy stubs with flows for all documented resources and operations.</li>
+                <li>Validate incoming requests: An OpenAPI spec validation policy can be used in an API proxy to ensure incoming requests conform to the specification, rejecting those that don't.</li>
+            </ul>
+        </div>
+
+        <div class="section" id="api-first-and-openapi">
+            <h2 class="text-2xl font-semibold mb-4">2 API-First and OpenAPI</h2>
+            <p>REST (Representational State Transfer) is an architectural style for designing networked applications. It is not a standard, but a set of guidelines.</p>
+            <h3 class="text-xl font-medium mb-3">Use of HTTP Verbs for CRUD Operations</h3>
+            <p>HTTP verbs are used to specify the type of operation performed on a resource. The four basic functions of persistent storage are Create, Read, Update, and Delete, commonly referred to as CRUD operations.</p>
+            <ul class="list-disc ml-6">
+                <li><strong>POST (Create):</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Used to create a new resource.</li>
+                        <li>For a collection (e.g., '/dogs'), 'POST/dogs' creates a new dog with an automatically generated ID.</li>
+                        <li>It is not a safe method (modifies state) and not idempotent (repeating the call creates multiple resources).</li>
+                    </ul>
+                </li>
+                <li><strong>GET (Read):</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Used to retrieve information about a collection of resources (e.g., '/dogs') or a single resource (e.g., '/dogs/1234').</li>
+                        <li>It should not update the state of the resource (safe method).</li>
+                        <li>It is idempotent (repeating the call produces the same result).</li>
+                    </ul>
+                </li>
+                <li><strong>PUT/PATCH (Update):</strong>
+                    <ul class="list-circle ml-6">
+                        <li><strong>PUT:</strong>
+                            <ul class="list-square ml-6">
+                                <li>Used to update an existing resource (e.g., `PUT/dogs/1234`).</li>
+                                <li>Can also be used to bulk update a collection (e.g., `PUT/dogs`), though this is often not recommended due to risk of accidental mass updates.</li>
+                                <li>Not a safe method (modifies state).</li>
+                                <li>Idempotent (a second identical 'PUT' call leaves the resource in the same state).</li>
+                                <li>Traditionally, 'PUT' completely replaces a resource with the provided payload. However, many public REST APIs use 'PUT' with 'PATCH' semantics (partial updates).</li>
+                            </ul>
+                        </li>
+                        <li><strong>PATCH:</strong>
+                            <ul class="list-square ml-6">
+                                <li>Used to modify only a subset of a resource (partial update).</li>
+                                <li>Fields with a value are added or modified; fields specified as 'null' are deleted; unmentioned fields are unchanged.</li>
+                                <li>Consider 'PATCH' for new APIs when partial updates are needed.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>DELETE (Delete):</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Used to delete a resource (e.g., `DELETE /dogs/1234`).</li>
+                        <li>Can also be used to delete an entire collection or matched resources (e.g., `DELETE /dogs`), though this is often not allowed due to high risk.</li>
+                        <li>Not a safe method (modifies state).</li>
+                        <li>Idempotent (a second identical 'DELETE' has no effect as the resource is already gone).</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">Keeping Verbs out of URLs</h3>
+            <p>In REST APIs, URLs should represent noun-oriented resources, not operations.</p>
+            <ul class="list-disc ml-6">
+                <li>Anti-pattern: `POST/UpdateStudent?id=15`, `/getDog`</li>
+                <li>Recommended: Use primary HTTP verbs (GET, POST, PUT/PATCH, DELETE) with noun-oriented resources (e.g., '/students/15').</li>
+                <li>For non-CRUD operations, consider using `POST` with a query parameter to specify the action (e.g., `POST/dogs/1234?action=walk`).</li>
+            </ul>
+            <p>Use query parameters for filtering, searching, and specifying partial responses to improve developer experience and API performance.</p>
+            <ul class="list-disc ml-6">
+                <li>Example: Instead of multiple calls to find specific dogs (e.g., 'GET /parks' then 'GET /parks/{parkId}/dogs' then 'GET /dogs/{dogId}' and manual filtering), use `GET /dogs?location=park&color=brown&state=running`.</li>
+                <li>Partial Responses: Allow developers to select specific fields to return in a response using query parameters (e.g., `GET /employees/5678?fields=id,fullName,geo.latitude`). This is beneficial for low-bandwidth apps or large payloads.</li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">API-First Development</h3>
+            <p>API-first development is a strategy where APIs are designed by prioritizing the needs of the app developers who will consume the API.</p>
+            <h4 class="text-lg font-medium mb-2">Core Principles</h4>
+            <ul class="list-disc ml-6">
+                <li>Design from the perspective of API users: Focus on usability and customer use cases, rather than simply exposing existing backend implementations.</li>
+                <li>Design API interface first: The API contract should be defined before implementation begins.</li>
+            </ul>
+            <h4 class="text-lg font-medium mb-2">Benefits of API-First Development</h4>
+            <ul class="list-disc ml-6">
+                <li>Shake out issues early: Uncover business and technical gaps with customers and stakeholders before development, avoiding wasted effort on unneeded features or poorly designed backend systems.</li>
+                <li>Promote consistency, usability, and best practices: Early review cycles ensure APIs are consistent, easy to use, and follow best practices, increasing adoption.</li>
+                <li>Increase ability to do parallel development: App developers can design and validate use cases using the API contract even while the API implementation is in progress.</li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">OpenAPI Specifications</h3>
+            <p>OpenAPI specifications are a widely used method to document RESTful APIs.</p>
+            <h4 class="text-lg font-medium mb-2">History</h4>
+            <ul class="list-disc ml-6">
+                <li>WADL (Web Application Description Language): Early XML-based specification for JSON APIs, complex and not human-readable.</li>
+                <li>Swagger (2010): Introduced JSON-formatted files to describe RESTful APIs, easier to use.</li>
+                <li>Swagger 2.0 (2014): Added support for YAML (YAML Ain't Markup Language), which is more human-readable, and allowed describing all aspects of an API in a single file.</li>
+                <li>OpenAPI Initiative (2015): Swagger format was donated and became OpenAPI version 2.</li>
+                <li>OpenAPI 3.0.0 (2017): Further improved structure, reusability, and added features like examples and callbacks.</li>
+                <li>Apigee currently supports OpenAPI versions 2 and 3.</li>
+            </ul>
+            <h4 class="text-lg font-medium mb-2">What an OpenAPI Specification Does</h4>
+            <ul class="list-disc ml-6">
+                <li>Describes API interface (contract): Defines how apps can use the API.</li>
+                <li>Easily human- and machine-readable: Written in JSON or YAML format.</li>
+                <li>Defines available paths and allowed operations: Specifies endpoints (e.g., `/employees`, `/employees/{id}`) and the HTTP methods allowed for each.</li>
+                <li>Specifies request and response format for each operation:
+                    <ul class="list-circle ml-6">
+                        <li>Includes success and failure response codes and payload formats.</li>
+                        <li>Describes authentication details.</li>
+                    </ul>
+                </li>
+            </ul>
+            <h4 class="text-lg font-medium mb-2">OpenAPI Specs in Apigee</h4>
+            <p>OpenAPI specifications are leveraged in Apigee for several purposes:</p>
+            <ul class="list-disc ml-6">
+                <li>Interactive documentation in developer portals: Provides app developers with live documentation and the ability to try out API calls, streamlining the learning process.</li>
+                <li>Generate API proxy stubs: Automatically creates Apigee API proxy stubs with flows for all documented resources and operations.</li>
+                <li>Validate incoming requests: An OpenAPI spec validation policy can be used in an API proxy to ensure incoming requests conform to the specification, rejecting those that don't.</li>
+            </ul>
+        </div>
+
+        <div class="section" id="api-proxies">
+            <h2 class="text-2xl font-semibold mb-4">3 API Proxies</h2>
+            <h3 class="text-xl font-medium mb-3">1. What is a Proxy?</h3>
+            <p>In Apigee a proxy acts as an intermediary between a requester and a provider. The requester sends a request to the proxy, and the proxy forwards it to the provider. The provider sends the response back to the proxy, which then fulfills the request to the requester. This means the requester doesn't need to know about the provider, and the provider doesn't need to communicate directly with the requester.</p>
+
+            <h3 class="text-xl font-medium mb-3">2. What is an API Proxy?</h3>
+            <p>An API proxy is a facade layer that separates API consumers (applications) from backend services and resources. Instead of connecting directly to backend services, the API consumer connects to the API proxy. The API proxy then handles the required functionality by calling the backend services.</p>
+            <h4 class="text-lg font-medium mb-2">Key functions of an API proxy:</h4>
+            <ul class="list-disc ml-6">
+                <li>Decouples API consumers from backend services: This allows changes to backend systems without breaking applications that consume the APIs.</li>
+                <li>Implements consumer-facing APIs: These APIs can be designed specifically for app developers.</li>
+                <li>Shields app developers from backend complexity: The API proxy can handle concerns like authentication, authorization, data manipulation, and removing sensitive data, abstracting this complexity from app developers.</li>
+                <li>Allows backend changes without affecting apps: Modernizing backend services or moving them to the cloud can be done without impacting applications using the proxy APIs.</li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">3. Apigee API Proxy</h3>
+            <p>An Apigee API proxy:</p>
+            <ul class="list-disc ml-6">
+                <li>Receives API requests based on specified hostname, scheme, and URL path combinations.</li>
+                <li>Adds security, scalability, and rate limiting to APIs by attaching policies to flows.</li>
+                <li>Can call multiple services, combine, and transform their responses during an API call.</li>
+                <li>Captures analytics for all calls, providing visibility into requests, responses, and backend services.</li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">4. Proxy Endpoints and Target Endpoints</h3>
+            <p>An Apigee API Proxy is split into two main parts:</p>
+            <ul class="list-disc ml-6">
+                <li><strong>Proxy Endpoint:</strong> This is the entry point for an API call, closer to the API consumer.
+                    <ul class="list-circle ml-6">
+                        <li>Traffic matching the protocol, host alias, and base URL is routed to this endpoint.</li>
+                        <li>Parses and verifies inbound requests.</li>
+                        <li>Policies are attached to rate-limit traffic and protect against invalid/malicious requests, often blocking them before they reach the backend.</li>
+                        <li>Typically builds the API response to be sent back to the caller.</li>
+                    </ul>
+                </li>
+                <li><strong>Target Endpoint:</strong> This handles the calling of the backend service, closer to the backend.
+                    <ul class="list-circle ml-6">
+                        <li>Specifies the URL of the backend service to call.</li>
+                        <li>Builds API requests for the backend service.</li>
+                        <li>Specifies connection and I/O timeouts for backend service calls.</li>
+                        <li>Validates status codes and payloads of backend responses.</li>
+                        <li>A proxy can have multiple target endpoints, but only one is called during an API request.</li>
+                        <li>It's also possible to have zero target endpoints if the proxy handles the entire request/response.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">5. Routing to an API Proxy</h3>
+            <ul class="list-disc ml-6">
+                <li><strong>Environments:</strong> Each organization can have multiple environments (e.g., development, test, production) to control the API lifecycle.</li>
+                <li><strong>Hostnames:</strong> The Apigee runtime can receive traffic using different hostnames (e.g., `api.example.org` for production, `test-api.example.org` for test).</li>
+                <li><strong>Base Path:</strong> The first part of the URL following the hostname (e.g., `/orders/v1` in `https://api.example.org/orders/v1/...`). A base path is configured in a proxy endpoint, and only traffic starting with that base path is routed to that endpoint.</li>
+                <li><strong>Deployment Consideration:</strong> When deploying a proxy revision to an environment, all proxy endpoint base paths must be unique within that environment. If multiple base paths match a request, the longer base path match will be chosen.</li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">6. Variables</h3>
+            <p>Apigee API proxies allow the use of variables to control proxy functionality.</p>
+            <ul class="list-disc ml-6">
+                <li><strong>Predefined Variables:</strong> Automatically set during an API call. Examples include `request.header.*`, `request.queryparam.*`, `request.verb`, `request.content`, `response.header.*`, `response.status.code`, `system.time`, and `target.url`.</li>
+                <li><strong>Custom Variables:</strong> You can create your own variables to store information for building requests and responses, logging, or controlling processing flow.</li>
+                <li>`proxy.pathsuffix`: A commonly used predefined variable that is set to the part of the incoming URL following the base path (excluding query parameters). Along with the request verb, it typically indicates the operation being performed in a RESTful API.</li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">7. Conditions</h3>
+            <p>Conditions are similar to "if statements" in programming languages and must always evaluate to true or false. They allow dynamic handling during API calls.</p>
+            <ul class="list-disc ml-6">
+                <li>Can use predefined and custom variables.</li>
+                <li>Can use string literals, numeric literals, 'true', 'false', and 'null'.</li>
+                <li>Can be chained using 'AND' and 'OR' operators.</li>
+                <li><strong>Pattern Matching Operators:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>`==`: Exact match.</li>
+                        <li>`Matches`: Match with a wildcard (`*`).</li>
+                        <li>`JavaRegex`: Allows use of regular expressions.</li>
+                        <li>`MatchesPath`: Used for matching URL patterns. `/` matches a single segment, `/***` matches one or more segments.</li>
+                    </ul>
+                </li>
+                <li>All pattern matching operators are case-sensitive.</li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">8. API Proxy Flows</h3>
+            <p>As an API call is processed, it travels through a sequence of flows, and policies attached to these flows are executed.</p>
+            <h4 class="text-lg font-medium mb-2">Evaluation Order:</h4>
+            <ul class="list-disc ml-6">
+                <li>Proxy Endpoint Request: Request validation and parsing typically happen here.</li>
+                <li>Route Rules: Evaluated to determine which target endpoint, if any, should continue processing.</li>
+                <li>Target Endpoint Request: The request to be sent to the backend is generally built here.</li>
+                <li>Request sent to target, and response received.</li>
+                <li>Target Endpoint Response: Backend response parsing typically happens here.</li>
+                <li>Proxy Endpoint Response: The API response is built, and necessary information is logged.</li>
+            </ul>
+            <h4 class="text-lg font-medium mb-2">Flow Structure within Each Section (PreFlow, Conditional Flows, PostFlow):</h4>
+            <ul class="list-disc ml-6">
+                <li><strong>PreFlow:</strong> Policies in PreFlow are always evaluated first.</li>
+                <li><strong>Conditional Flows:</strong> Contain zero or more flows, each with an optional condition. They are evaluated in order, and only policies in the first conditional flow with a true condition are executed. If no conditions are true, none are executed.</li>
+                <li><strong>PostFlow:</strong> Policies in PostFlow are always evaluated after any conditional flows.</li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">9. Policies</h3>
+            <p>Policies are pre-built modules that implement specific, limited functions within an API proxy. They are configured using simple XML and typically do not require custom code, though some allow for custom code execution. A policy can be conditionally executed.</p>
+            <h4 class="text-lg font-medium mb-2">Policy Categories:</h4>
+            <ul class="list-disc ml-6">
+                <li><strong>Traffic Management:</strong> SpikeArrest (rate limiting), Quota, Cache policies (Lookup/populate/invalidate cache, ResponseCache).</li>
+                <li><strong>Security:</strong> VerifyAPIKey, OAuthV2 (generate, verify, refresh, invalidate tokens), BasicAuthentication, JWT/JWS (generate, verify, decode), SAML assertion (generate, validate), HMAC, CORS, JSON/XML Threat Protection, Regular Expression Threat Protection, Access Control.</li>
+                <li><strong>Mediation:</strong> Assign Message (create, modify, remove HTTP message elements/variables), ExtractVariables, KeyValueMapOperations, RaiseFault, JSONtoXML, XMLtoJSON, XSL Transform, MessageValidation, OpenAPI Spec Validation (OASValidation).</li>
+                <li><strong>Extension:</strong> JavaScript, JavaCallout (custom code), ServiceCallout (call external services/other proxies), FlowCallout (call shared flows).</li>
+                <li><strong>Other:</strong> MessageLogging, DataCapture.</li>
+            </ul>
+            <p>Attaching Policies: Policies are attached within flows as "steps." Each step can have an associated condition, meaning the policy is executed only if the condition is true. Steps within a flow are evaluated in order.</p>
+
+            <h3 class="text-xl font-medium mb-3">10. Route Rules</h3>
+            <p>Route rules determine which target endpoint will be used for an API call, if any.</p>
+            <ul class="list-disc ml-6">
+                <li>Evaluated in order after the proxy endpoint request flows complete.</li>
+                <li>The first matching route rule indicates the target endpoint.</li>
+                <li>Can have an optional condition; if no condition, the rule automatically matches.</li>
+                <li>Can specify no target endpoint, in which case processing continues with the proxy endpoint response.</li>
+                <li>Best Practice: The last route rule should have no condition to act as a default.</li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">11. Target Servers</h3>
+            <p>Target servers are an Apigee feature used to avoid hardcoding backend URLs in proxy configurations, especially when promoting proxies across different environments (e.g., test to production).</p>
+            <ul class="list-disc ml-6">
+                <li>You create a target server configuration with the same name in each environment.</li>
+                <li>The hostname, port, and any certificate information can be different for each environment, but the target server name remains consistent.</li>
+                <li>In the proxy's 'HTTPTargetConnection', you reference the target server name within a `Load Balancer` element instead of a hardcoded URL. The actual hostname and port are then taken from the target server configuration specific to the environment where the proxy is deployed.</li>
+                <li>This allows the same proxy code to be used in all environments without modifications.</li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">12. Load Balancing Backend Servers</h3>
+            <p>Apigee provides load balancing features for distributing traffic among multiple backend.</p>
+        </div>
+
+        <div class="section" id="api-products">
+            <h2 class="text-2xl font-semibold mb-4">4 API Products</h2>
+            <p>This document summarizes the main concepts and information regarding API products, API keys, and REST API responses.</p>
+            <h3 class="text-xl font-medium mb-3">API Products</h3>
+            <ul class="list-disc ml-6">
+                <li><strong>Definition:</strong> An API product is a bundle of API operations designed for use by app developers. It acts as a mechanism to package, control access to, and manage service levels for APIs.</li>
+                <li><strong>Purpose:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Packaging: Grouping relevant API operations together (e.g., product catalog, shopping cart, order completion).</li>
+                        <li>Access Control: Granting or restricting access to APIs at a product level (e.g., blocking public access, tracking app usage).</li>
+                        <li>Service Levels: Providing different levels of access or service for the same APIs (e.g., read-only/read-write, internal/public, free/standard/premium).</li>
+                    </ul>
+                </li>
+                <li><strong>Custom Attributes:</strong> These are name/value pairs associated with an API product (or individual operations/proxies). When an app uses an API key, these attributes are populated as variables, allowing dynamic control of API proxy functionality (e.g., `accessType: internal/external`, `service-plan: free/standard/premium`).</li>
+                <li><strong>Product Mindset vs. Project Mindset:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Project: Focuses on deliverables, delivery dates, and has a completion date. Requirements are often locked down upfront.</li>
+                        <li>Product: Focuses on outcomes, adapts to market needs, and does not have a completion date. This approach leads to better adoption and customer satisfaction.</li>
+                    </ul>
+                </li>
+                <li><strong>Design Strategies:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>API products should be designed based on the needs of app developers, not internal implementation teams.</li>
+                        <li>APIs and API operations from different teams can be combined into a single API product.</li>
+                        <li>Multiple API products can provide different levels of access to the same underlying APIs (e.g., an internal read-write product, an internal read-only product, and an external limited-access product).</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">API Keys</h3>
+            <ul class="list-disc ml-6">
+                <li><strong>Role:</strong> An API key is typically the 'consumer key' that identifies an app and allows it to access protected API operations.</li>
+                <li><strong>Protection:</strong> API keys are used to protect APIs from unauthorized access. Requests without a valid API key (or one that doesn't have access to the specific API/operation) can be rejected.</li>
+                <li><strong>VerifyAPIKey Policy:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>This policy is almost always attached early in the proxy endpoint request preflow.</li>
+                        <li>It validates the API key.</li>
+                        <li>If the key is valid, variables are created for associated app, developer, and API product attributes (including custom attributes). These variables can then be used to control the API proxy's behavior dynamically.</li>
+                        <li>If the API key is invalid or doesn't grant access, the policy raises a fault, stopping processing and returning an error message.</li>
+                        <li>The policy typically looks for the API key in a query parameter or HTTP header.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">REST API Responses</h3>
+            <h4 class="text-lg font-medium mb-2">HTTP Status Codes:</h4>
+            <ul class="list-disc ml-6">
+                <li><strong>Purpose:</strong> Primary signals for success or failure of an operation. They have specific, defined meanings and should be used consistently across all APIs.</li>
+                <li><strong>Common Codes:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>200 OK: Request successful.</li>
+                        <li>400 Bad Request: Client's request didn't satisfy requirements (fixable by client).</li>
+                        <li>401 Unauthorized: Authentication required, user not authenticated.</li>
+                        <li>403 Forbidden: User authenticated but not authorized to perform the request.</li>
+                        <li>404 Not Found: Resource specified in URL doesn't exist or is inaccessible.</li>
+                        <li>429 Too Many Requests: Request rejected due to too many recent requests (used by Apigee for spike arrest and quota policies).</li>
+                        <li>500 Server Error: Unexpected error on the server side (caller might retry later).</li>
+                    </ul>
+                </li>
+                <li><strong>Other Useful Codes:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>201 Created: Resource successfully created.</li>
+                        <li>204 No Content: Success, but no content in response payload.</li>
+                        <li>304 Not Modified: Resource version caller has is most up-to-date.</li>
+                        <li>405 Method Not Allowed: Valid resource, but requested HTTP verb not allowed.</li>
+                        <li>406 Not Acceptable: Requested response format not supported.</li>
+                        <li>409 Conflict: Request cannot be completed due to a conflict (e.g., resource changed after original read).</li>
+                        <li>503 Service Unavailable: Service temporarily unable to handle request (e.g., maintenance).</li>
+                    </ul>
+                </li>
+                <li><strong>Status Code Ranges:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>1XX - Informational: Processing not complete.</li>
+                        <li>2XX - Success: Request received, understood, accepted.</li>
+                        <li>3XX - Redirection: Client must take further action.</li>
+                        <li>4XX - Client Error: Error due to client's request (client's fault).</li>
+                        <li>5XX - Server Error: Error on the server (not client's fault).</li>
+                    </ul>
+                </li>
+                <li><strong>Important Note:</strong> Do not automatically pass backend status codes directly to the client if they are misleading or expose sensitive internal information. Always consider the meaning of the status code being returned to the app developer.</li>
+            </ul>
+            <h4 class="text-lg font-medium mb-2">Response Body Content:</h4>
+            <ul class="list-disc ml-6">
+                <li><strong>Bad Responses:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Lack of context for how to fix a client-side error (e.g., 400 Bad Request without details).</li>
+                        <li>Information leakage (e.g., returning 403 Forbidden when a 404 Not Found would prevent revealing resource existence).</li>
+                        <li>Leakage of internal server details (e.g., backend system names, internal IP addresses in a 500 Server Error).</li>
+                    </ul>
+                </li>
+                <li><strong>Good Responses:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Provide clear messages explaining the error and how to fix it (for client errors).</li>
+                        <li>Avoid leaking sensitive information about the backend or resource existence if the user is not authorized.</li>
+                        <li>Include a correlationId for server errors to help with debugging without exposing internal details.</li>
+                    </ul>
+                </li>
+            </ul>
+            <h4 class="text-lg font-medium mb-2">Pagination:</h4>
+            <ul class="list-disc ml-6">
+                <li><strong>Purpose:</strong> To return a subset of ordered results at a time, especially for searches or queries with a large or unknown number of results.</li>
+                <li><strong>Types:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Offset and Limit: Works well for UI use cases. 'offset' indicates the starting resource, 'limit' the number of resources to return.</li>
+                        <li>Value-based Paging: Used for traversing all results consistently. A "last" parameter (e.g., timestamp, ID) is returned with the last retrieved resource, used in the next call to retrieve subsequent resources.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">Recap</h3>
+            <h4 class="text-lg font-medium mb-2">Key Apigee Elements & Their Relation</h4>
+            <ol class="list-decimal ml-6">
+                <li><strong>Environment Group:</strong>
+                    <ul class="list-disc ml-6">
+                        <li>What it is: A logical grouping of one or more Apigee Environments. It defines the public-facing domain names (hosts) through which your APIs are accessed.</li>
+                        <li>Relation: Contains Environments. Provides the top-level URL for your APIs.</li>
+                        <li>Example: `apigee-org-prod.net` (domain)</li>
+                        <li>Corresponding Elements:
+                            <ul class="list-circle ml-6">
+                                <li>Domain: The public hostname for API calls.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>Environment:</strong>
+                    <ul class="list-disc ml-6">
+                        <li>What it is: A runtime execution context for API Proxies and Shared Flows. Typically maps to development stages (e.g., dev, test, prod). Each environment is isolated.</li>
+                        <li>Relation: Lives within an Environment Group. API Proxies are deployed to an Environment.</li>
+                        <li>Example: `prod` (environment within `apigee-org-prod.net`)</li>
+                        <li>Corresponding Elements:
+                            <ul class="list-circle ml-6">
+                                <li>Domain: Inherits from the Environment Group (e.g., `apigee-org-prod.net`).</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>API Proxy:</strong>
+                    <ul class="list-disc ml-6">
+                        <li>What it is: The Apigee-managed interface that clients consume. It acts as a facade in front of your backend services, providing security, traffic management, mediation, etc.</li>
+                        <li>Relation: Contains Proxy Endpoints, Target Endpoints, and Policies. Has Revisions. Deployed to an Environment.</li>
+                        <li>Corresponding Elements:
+                            <ul class="list-circle ml-6">
+                                <li>Example: `Products-API`</li>
+                                <li>Paths: Defined in Proxy Endpoints.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>Revisions:</strong>
+                    <ul class="list-disc ml-6">
+                        <li>What it is: A numbered snapshot of an API Proxy's configuration. Every time you save changes to an API Proxy, a new revision is created.</li>
+                        <li>Relation: An API Proxy has multiple revisions. Only one revision of a proxy can be deployed to an environment at a time (per base path).</li>
+                        <li>Example: `Products-API Revision 1`, `Products-API Revision 2`</li>
+                        <li>Corresponding Elements:
+                            <ul class="list-circle ml-6">
+                                <li>State: Deployed/Undeployed.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>Proxy Endpoint:</strong>
+                    <ul class="list-disc ml-6">
+                        <li>What it is: Defines the client-facing configuration of an API Proxy. This includes the base path (the public URL clients use) and any policies applied before the request is sent to the backend.</li>
+                        <li>Relation: Part of an API Proxy. Defines the public interface. Policies are attached to its flows.</li>
+                        <li>Example: For Products-API, a Proxy Endpoint with `/v1/products` base path.</li>
+                        <li>Corresponding Elements:
+                            <ul class="list-circle ml-6">
+                                <li>Paths: `/v1/products`</li>
+                                <li>Codes: HTTP status codes for responses.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <p>You can use multiple ProxyEndpoints in a single Apigee API proxy to expose the same backend logic through different interfaces, each with its own network settings or security rules.</p>
+                </li>
+                <li><strong>Policies:</strong>
+                    <ul class="list-disc ml-6">
+                        <li>What it is: Functional building blocks that enable specific API management capabilities (e.g., API key verification, quota, JSON-to-XML transformation, traffic spike arrest).</li>
+                        <li>Relation: Attached to specific "flows" (request/response paths) within Proxy Endpoints or Target Endpoints.</li>
+                        <li>Example: `VerifyAPIKeyPolicy`, `QuotaPolicy`, `ResponseCachePolicy`</li>
+                        <li>Corresponding Elements:
+                            <ul class="list-circle ml-6">
+                                <li>Codes: Can generate HTTP error codes (e.g., 401 for unauthorized, 429 for quota exceeded).</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>API Product:</strong>
+                    <ul class="list-disc ml-6">
+                        <li>What it is: A bundle of API Proxies (or specific paths/operations within them) that you make available to app developers. It's used to control access (via API keys), enforce quotas, and define monetization strategies.</li>
+                        <li>Relation: Contains references to API Proxies (or their resources). Developers obtain API Keys linked to API Products.</li>
+                        <li>Example: `Premium-Products-Access` (might include Products-API `/v1/products` GET and POST methods)</li>
+                        <li>Corresponding Elements:
+                            <ul class="list-circle ml-6">
+                                <li>Paths: The specific paths/methods included from proxies.</li>
+                                <li>Codes: Can lead to 403 (Forbidden) if API Key lacks product access.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <div class="section" id="auth-authz-oauth">
+            <h2 class="text-2xl font-semibold mb-4">5 Authentication, Authorization, and OAuth</h2>
+            <p>This document summarizes key concepts and information related to API security, with a focus on OAuth.</p>
+            <h3 class="text-xl font-medium mb-3">API Security Concerns</h3>
+            <ul class="list-disc ml-6">
+                <li>Data Breaches: Many data breaches involve inadequately secured applications and APIs.</li>
+                <li>Importance of Security: As APIs become crucial for companies, securing them is equally important to prevent data breaches.</li>
+                <li>Consider Security for All APIs: Even if an API doesn't seem to contain sensitive data, thoughtful consideration of security requirements is always necessary.</li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">API Exposure Types</h3>
+            <ul class="list-disc ml-6">
+                <li><strong>Public APIs:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Available and discoverable on the internet.</li>
+                        <li>Typically contain sensitive data.</li>
+                        <li>Require authentication and data security to protect against easy access for bad actors.</li>
+                    </ul>
+                </li>
+                <li><strong>Private APIs (Internal APIs):</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Not exposed on the internet.</li>
+                        <li>While the attack vector is smaller, sensitive APIs should still be secured to protect user data from internal breaches.</li>
+                        <li>Any sensitive APIs accessible outside the firewall must be fully authenticated and encrypted.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">Security Considerations</h3>
+            <ul class="list-disc ml-6">
+                <li><strong>Infrastructure and Network Security:</strong> The underlying infrastructure of an API management platform must be secure. Google Cloud and Apigee API Platform are designed with security in mind and offer tools like Cloud Armor (web application firewall) and reCAPTCHA (bot protection).</li>
+                <li><strong>Traffic Management:</strong> Source IP: Use Access Control policies to allow or deny traffic based on specific IP addresses or ranges.</li>
+                <li><strong>Injection and Data-Based Attacks:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>APIs often accept data payloads to be saved in backend databases, making them vulnerable to injection attacks (sending untrusted data to alter service execution).</li>
+                        <li>Apigee's API proxy acts as a security layer to inspect incoming data before it reaches backends.</li>
+                        <li>Regular Expression Protection policy: Configures regular expressions to detect dangerous content in requests (payload, headers, query parameters) and reject them.</li>
+                        <li>Still, adhere to best practices like parameterized queries and escaping/encoding data in your backend services.</li>
+                        <li>The RegularExpression Protection policy can detect these types of attacks.</li>
+                    </ul>
+                </li>
+                <li><strong>Application-Level Denial of Service (DoS):</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Large or malformed XML or JSON structures can overwhelm services, causing excessive memory use and reduced API capacity.</li>
+                        <li>JSON Threat Protection policy & XML Threat Protection policy: Detect dangerous payloads without parsing them, protecting both the proxy and backend.</li>
+                    </ul>
+                </li>
+                <li><strong>Data Confidentiality:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Regulations and privacy concerns necessitate limiting access to user data.</li>
+                        <li>Role-based access control: Limits internal user access to production environments, including tracing of live production traffic, by assigning specific permissions to roles.</li>
+                        <li>Data masking and private variables: Prevent sensitive data from appearing in trace sessions, even for support teams debugging issues.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">Identity, Authentication, and Authorization</h3>
+            <p>These are distinct concepts in API security:</p>
+            <ul class="list-disc ml-6">
+                <li><strong>Identity Tracking:</strong> Determining the identity of the app or user for a request, similar to checking if someone has a ticket. It identifies the caller but doesn't prove who they are.
+                    <ul class="list-circle ml-6">
+                        <li>Apps: Generally identified using API keys.</li>
+                        <li>Users: Identified by username or account number.</li>
+                    </ul>
+                </li>
+                <li><strong>Authentication (AuthN):</strong> The process of validating credentials to prove identity. It's like asking "Who are you? Prove it."
+                    <ul class="list-circle ml-6">
+                        <li>App credentials: Consumer key and secret.</li>
+                        <li>User credentials: Often username and password.</li>
+                        <li>Machine credentials: TLS certificate.</li>
+                        <li>Protection: All authentication traffic must be sent using Transport Layer Security (TLS).</li>
+                        <li>Standards: Active Directory (AD)/LDAP, OpenID Connect.</li>
+                    </ul>
+                </li>
+                <li><strong>Authorization (AuthZ):</strong> Determining what an authenticated app or user is allowed to do. It's like saying "Here's what you are allowed to do."
+                    <ul class="list-circle ml-6">
+                        <li>Only makes sense after successful authentication.</li>
+                        <li>Proof of authorization: Often via tokens.</li>
+                        <li>Standards: OAuth 2.0, SAML 2.0.</li>
+                    </ul>
+                </li>
+            </ul>
+            <h4 class="text-lg font-medium mb-2">Common Patterns of Usage in API Requests:</h4>
+            <ul class="list-disc ml-6">
+                <li><strong>API Key:</strong> Can be passed as a query parameter (less recommended due to logging) or, preferably, in a header (e.g., `ApiKey: 45c78ece5b77647854a`).</li>
+                <li><strong>Basic Authentication:</strong> Used for user or app credentials (username and password or consumer key and secret) in the `Authorization` header (e.g., `Authorization: Basic YmFkOnBhc3N3b3Jk`). The value is base64 encoded, which is not encryption and relies on TLS for protection.</li>
+                <li><strong>Access Token:</strong> Used for authorization, generally passed as a bearer token in the `Authorization` header (e.g., `Authorization: Bearer 4WCAchNNtVyK8JsACI1HP7ml`).</li>
+                <li><strong>Token Format:</strong> There are two common types of access tokens:
+                    <ul class="list-circle ml-6">
+                        <li>Opaque Tokens: These are random strings of characters with no meaning to the client (e.g., `4WCAchNNtVyK8JsACI1HP7ml`). Only the authorization server (like Apigee) can look up this token in its database to validate it.</li>
+                        <li>JSON Web Tokens (JWTs): These tokens are digitally signed, not encrypted. The signature guarantees that the token was issued by a trusted server and that its contents have not been altered. Anyone can decode a JWT to see the information inside, but only the server can create a valid signature.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">OAuth (Open Authorization) Framework</h3>
+            <p>OAuth is an authorization framework for REST APIs that allows users or clients to grant access to server resources to another entity without sharing their credentials. The current industry standard is OAuth 2.0, supported by Apigee.</p>
+            <ul class="list-disc ml-6">
+                <li><strong>Access Tokens:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Issued by an authorization server (e.g., Apigee acting as one).</li>
+                        <li>Allow limited access to specific resources for a specified period of time.</li>
+                        <li>Can be revoked by the user or the issuing server if compromised.</li>
+                        <li>In Apigee, they are opaque strings (random characters) with no encoded meaning; all information is stored on the authorization server.</li>
+                        <li>Should be passed as Bearer tokens in the 'Authorization' header.</li>
+                        <li>Obtaining an Access Token: Requires the application to authenticate (client ID + secret), and often the resource owner (user) to authenticate, along with an optional scope.</li>
+                    </ul>
+                </li>
+                <li><strong>Refresh Tokens:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Provide a limited right to reauthorize granted access by obtaining new access tokens without requiring user credentials.</li>
+                        <li>Used when the previous access token expires.</li>
+                        <li>Also opaque strings in Apigee.</li>
+                        <li>Obtaining a new Access Token with a Refresh Token: The app provides its client ID and secret, the refresh token, and an optional scope. The new access token generally has a short lifespan (e.g., five minutes).</li>
+                    </ul>
+                </li>
+                <li><strong>Other Terms:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Grant types: Authentication usage scenarios supported by OAuth 2.0 (four specified types).</li>
+                        <li>Client IDs and client secrets: Used to identify and authenticate apps (Apigee's consumer key and consumer secret).</li>
+                        <li>Scopes: Limit the access for a given token, granting permission only for necessary operations. The authorization server defines scope names and access levels. API proxies can block requests based on scope.</li>
+                        <li>TLS (Transport Layer Security): All OAuth 2.0 traffic (including API requests with tokens) must be encrypted via TLS (successor to SSL) to protect sensitive information.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h4 class="text-lg font-medium mb-2">How a User Controls Scopes</h4>
+            <p>A user's control over scopes happens at two main points:</p>
+            <ol class="list-decimal ml-6">
+                <li>During Initial Authorization: When an application first asks for permission (e.g., "This app wants to view your contacts and manage your calendar"), the user is presented with a consent screen. At this point, they can agree to grant the requested scopes. Some platforms may even allow users to uncheck certain permissions before proceeding.</li>
+                <li>After Authorization (In Account Settings): After granting access, a user can typically go to their account management page (e.g., Google's "Security" settings). From there, they can see all third-party applications they've authorized and can choose to revoke access entirely. Revoking access invalidates the application's token and removes all its permissions (scopes).</li>
+            </ol>
+            <p>An application cannot get new scopes without re-initiating the authorization process and asking the user for their consent again.</p>
+
+            <h4 class="text-lg font-medium mb-2">Terminology: Types of Apps</h4>
+            <ul class="list-disc ml-6">
+                <li><strong>Confidential Apps</strong>
+                    <p>These are applications that run on a secure server where the code is not exposed to the end-user. Because of this, they can safely store a client secret.</p>
+                    <p>Example: A backend server for an e-commerce website. When it needs to call a payment gateway API like Stripe, the backend server can securely use its client ID and client secret because those credentials live on the server, completely hidden from users' browsers.</p>
+                </li>
+                <li><strong>Public Apps</strong>
+                    <p>These applications run in an insecure environment, typically the user's device or browser, where they cannot protect a client secret.</p>
+                    <p>Example: A single-page web application (like a React or Angular app) or a native mobile app. The application's code can be inspected by the user, so embedding a client secret would be like taping your house key to the front door. These apps use OAuth flows (like Authorization Code with PKCE) that don't require a client secret.</p>
+                </li>
+                <li><strong>Trusted Apps</strong>
+                    <p>These are first-party applications that are so trusted by the user and the organization that they can be given the user's password directly.</p>
+                    <p>Example: Your official mobile banking app. You enter your banking username and password directly into the app because you trust that it is built and secured by your bank. This is an exception, and this level of trust is rare.</p>
+                </li>
+                <li><strong>Untrusted Apps</strong>
+                    <p>This refers to any third-party application that should never handle a user's password directly. This is the primary problem that OAuth was created to solve.</p>
+                    <p>Example: A third-party app like Canva that asks to access your Google Drive photos. You are redirected to a Google sign-in page to grant permission. Canva never sees your Google password; it only receives an access token that gives it permission to access your photos and nothing else.</p>
+                </li>
+            </ul>
+
+            <h4 class="text-lg font-medium mb-2">OAuth Grant Types</h4>
+            <p>OAuth grant types are simply the different methods an application can use to get an access token. Each method, or "flow," is designed for a different type of application or scenario.</p>
+            <p>In Apigee, you configure the OAuthV2 policy to handle these different flows.</p>
+            <ol class="list-decimal ml-6">
+                <li><strong>Authorization Code</strong>
+                    <p>This is the most common and secure method, used by web and mobile apps where a user logs in.</p>
+                    <ul class="list-disc ml-6">
+                        <li>It's like clicking "Log in with Google" on a website. The site redirects you to Google to sign in, and you then grant it permission. The site gets a temporary code, which it exchanges behind the scenes for an access token.</li>
+                    </ul>
+                    <p>Use Case: A user authorizing a third-party application (like a travel booking site) to access their calendar or contacts.</p>
+                </li>
+                <li><strong>Client Credentials</strong>
+                    <p>This method is for machine-to-machine (M2M) communication where there is no user.</p>
+                    <ul class="list-disc ml-6">
+                        <li>A backend server needs to get data from another internal service. The server authenticates using its own credentials (a client ID and secret) to get a token.</li>
+                    </ul>
+                    <p>Use Case: A nightly data-processing script that needs to call an internal reporting API.</p>
+                </li>
+            </ol>
+
+            <h4 class="text-lg font-medium mb-2">Create the OAuth 2.0 Token Proxy</h4>
+            <p>First, you need an API proxy dedicated to issuing access tokens. This proxy will expose the standard `/token` endpoint.</p>
+            <ul class="list-disc ml-6">
+                <li>Create a new API proxy (e.g., named `oauth-v1`). This proxy won't have a backend target; its job is to run OAuth policies and generate tokens.</li>
+                <li>Attach the OAuthV2 Policy: Inside this proxy, you will create flows that use the OAuthV2 policy. You will configure a separate flow for each grant type you want to support.
+                    <ul class="list-circle ml-6">
+                        <li>Client Credentials Flow: Configure the policy with `<Operation>GenerateAccessToken</Operation>` and `<GrantType>client_credentials</GrantType>`.</li>
+                        <li>Authorization Code Flow: This is more complex and requires multiple policy operations (GenerateAuthorizationCode, GenerateAccessToken), typically involving redirects to a login page.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h4 class="text-lg font-medium mb-2">Set Up the API Product and App</h4>
+            <p>OAuth 2.0 relies on client credentials (client ID and secret) which are managed through API products and developer apps.</p>
+            <ul class="list-disc ml-6">
+                <li>Create an API Product: Create a product (e.g., Retail Product) and associate it with the protected API proxies (e.g., your `/products` and `/orders` APIs), but not with the `oauth-v1` token proxy.</li>
+                <li>Register a Developer App: Create a developer and then register an app for them. When you add your Retail Product to this app, Apigee will automatically generate a Consumer Key (Client ID) and Consumer Secret. These are the credentials the client application will use to call your token endpoint.</li>
+            </ul>
+
+            <h4 class="text-lg font-medium mb-2">Secure Your Resource APIs</h4>
+            <p>Finally, you need to enforce token validation on the APIs you want to protect.</p>
+            <ul class="list-disc ml-6">
+                <li>Go to your resource proxies (e.g., the proxy that handles `/products`).</li>
+                <li>Attach the VerifyAccessToken Policy: In the PreFlow of the request, add an OAuthV2 policy configured with the `<Operation>VerifyAccessToken</Operation>`. This policy will check for a valid `Authorization: Bearer {token}` header. If the token is missing, invalid, or expired, the policy will reject the request.</li>
+            </ul>
+
+            <h4 class="text-lg font-medium mb-2">Token creation and token validation</h4>
+            <p>They are connected through the API Product.</p>
+            <p>The VerifyAccessToken policy on your resource API automatically checks if the token presented is valid for the specific API Product that protects that resource.</p>
+            <p>Token Creation: A client application sends its Client ID and Client Secret to your `/token` endpoint. Apigee knows these credentials belong to a specific Developer App. That app, in turn, is authorized for one or more API Products. When Apigee creates the token, it internally links it to that API Product.</p>
+            <ol class="list-decimal ml-6">
+                <li>Token Validation: The client then sends that token to your resource API (e.g., `/products`). Your VerifyAccessToken policy on this proxy does the following check:
+                    <ul class="list-disc ml-6">
+                        <li>"Is this a valid, unexpired token?"</li>
+                        <li>"Is the API I am protecting (`/products`) part of the API Product this token was issued for?"</li>
+                    </ul>
+                </li>
+            </ol>
+            <p>If the answer to both questions is yes, the request is allowed. If the token was issued for a different API Product that doesn't include the `/products` API, the policy will reject the request.</p>
+        </div>
+
+        <div class="section" id="content-transport-platform-security">
+            <h2 class="text-2xl font-semibold mb-4">6 Content, Transport, and Platform Security in Apigee</h2>
+            <p>This document summarizes key concepts and information regarding content, transport, and platform security when developing APIs with Apigee.</p>
+            <h3 class="text-xl font-medium mb-3">Content-Based Attacks and Protection</h3>
+            <p>Content-based attacks exploit malformed API requests to cause issues with APIs and backend services. These attacks can involve manipulating text fields to leak or destroy data, or crafting JSON/XML payloads to disrupt parsing and cause application-level denial of service. Legacy services are often vulnerable as they may not have been designed with external traffic in mind.</p>
+            <h4 class="text-lg font-medium mb-2">Protection:</h4>
+            <p>It's crucial to block these attacks at the API proxy level before data reaches the backend. Apigee offers policies to help mitigate these threats.</p>
+            <h5 class="text-base font-medium mb-1">Input Validation Tips:</h5>
+            <ul class="list-disc ml-6">
+                <li>Use the ExtractVariables policy with JSONPath/XPath to extract fields from payloads.</li>
+                <li>Validate required fields, field interactions, and regular expression patterns using proxy conditions or JavaScript policies.</li>
+                <li>Rewrite validation error messages from the backend to maintain a consistent format.</li>
+            </ul>
+            <h5 class="text-base font-medium mb-1">Malicious Input Checks:</h5>
+            <ul class="list-disc ml-6">
+                <li>Block dangerous strings like SQL injection code in the proxy, even if the backend also performs checks.</li>
+                <li>Still, adhere to best practices like parameterized queries and escaping/encoding data in your backend services.</li>
+                <li>The RegularExpression Protection policy can detect these types of attacks.</li>
+            </ul>
+            <h5 class="text-base font-medium mb-1">Regular Expression Protection Policy:</h5>
+            <ul class="list-disc ml-6">
+                <li>Searches for blocked patterns in various locations (URI, payload, headers, query parameters, variables).</li>
+                <li>If a specified regular expression matches, the message is considered a threat and rejected.</li>
+            </ul>
+            <h5 class="text-base font-medium mb-1">Content-Type Header:</h5>
+            <ul class="list-disc ml-6">
+                <li>Specifies the format of incoming payloads (e.g., 'application/json', 'application/xml').</li>
+                <li>Correctly setting the 'Content-Type' header is essential for JSON or XML parsing policies to function. If incorrect or missing, parsing attempts by policies like ExtractVariables might be silently skipped.</li>
+                <li>You can use a series of policies to handle 'Content-Type' header scenarios, such as raising a fault for invalid types or setting a default if it's null.</li>
+            </ul>
+            <h5 class="text-base font-medium mb-1">Parsing Attacks and Threat Protection Policies:</h5>
+            <ul class="list-disc ml-6">
+                <li>XML and JSON payloads can be crafted to overwhelm parsers, leading to denial of service.</li>
+                <li>JSONThreatProtection and XMLThreatProtection policies use string-based evaluation instead of parsing the payload. This allows them to detect payloads exceeding configured limits and reject requests before a parser is engaged.</li>
+                <li>These policies should always be run before any JSON/XML parsing.</li>
+            </ul>
+            <h5 class="text-base font-medium mb-1">JSONThreat Protection Policy:</h5>
+            <ul class="list-disc ml-6">
+                <li>Allows specifying limits on JSON structures and fields (e.g., `ArrayElementCount`, `ContainerDepth`, `ObjectEntryCount`, `ObjectEntryNameLength`, `StringValueLength`).</li>
+                <li>These limits are checked without using a parser.</li>
+                <li>The first exceeded limit results in an error. It's important to set limits that allow legitimate requests to pass.</li>
+            </ul>
+            <h5 class="text-base font-medium mb-1">XMLThreat Protection Policy:</h5>
+            <ul class="list-disc ml-6">
+                <li>Functions similarly to the JSONThreat Protection policy but with specific configuration elements for XML (e.g., `NameLimits`, `StructureLimits`, `ValueLimits`) due to the greater complexity of the XML format.</li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">Transport Security</h3>
+            <p>Transport Layer Security (TLS), the successor to Secure Sockets Layer (SSL), establishes encrypted HTTP links (HTTPS) between clients and servers. Certificates are used to prove identity. TLS is recommended for all API traffic and is a firm requirement for OAuth traffic.</p>
+            <ul class="list-disc ml-6">
+                <li><strong>One-way TLS (Server Validation):</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Standard web HTTPS.</li>
+                        <li>The server presents a certificate to prove its identity; the client validates it using a truststore.</li>
+                        <li>The client does not present a certificate.</li>
+                    </ul>
+                </li>
+                <li><strong>Two-way TLS (Mutual Authentication):</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Recommended for securing the link between Apigee and backend services.</li>
+                        <li>Both the client and server present and validate each other's certificates.</li>
+                        <li>This provides stronger authentication, ensuring requests to the backend are from a legitimate source.</li>
+                    </ul>
+                </li>
+                <li><strong>Keystores and Truststores:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Keystore: Stores certificates to be presented to a remote server and the associated private key to prove identity.</li>
+                        <li>Truststore: Stores certificates to compare with remote certificates, allowing the proxy to verify the identity of the communicating participant.</li>
+                    </ul>
+                </li>
+                <li>On Apigee, keystores and truststores are used for secure connections.</li>
+                <li><strong>Configuring TLS for Apigee:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Apigee: TLS is configured on the load balancer in the Google Cloud project.</li>
+                        <li>Apigee Backend: TLS is configured in the TargetEndpoint of the proxy or in a TargetServer configuration.</li>
+                        <li>A truststore is used for both one-way and two-way TLS to validate backend certificates.</li>
+                        <li>For two-way TLS, an Apigee keystore is used to store private keys and certificates presented to the backend.</li>
+                    </ul>
+                </li>
+                <li><strong>References for Keystores and Truststores:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Keystores and truststores can be specified by name or by using a reference (a variable containing the name).</li>
+                        <li>Using references allows for key and certificate rotation without downtime, as a new keystore/truststore with updated certificates can be created, and the reference can be updated on the fly.</li>
+                    </ul>
+                </li>
+                <li><strong>Access Control Policy:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>An additional method to restrict incoming connections.</li>
+                        <li>Allows for IP allow/deny lists for ranges of IPs.</li>
+                        <li>Rules are evaluated in order, and the `noRuleMatchAction` specifies the default behavior if no rules match.</li>
+                        <li>The ClientIPVariable can be used to specify the IP address to check, which is useful when Apigee is behind a load balancer (often looking at the `X-Forwarded-For` header).</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">Apigee Platform Security</h3>
+            <p>Platform security focuses on protecting internal access within the Apigee environment.</p>
+            <ul class="list-disc ml-6">
+                <li><strong>Data Masking:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>The Apigee trace tool allows users to see data during API calls, including sensitive information.</li>
+                        <li>Data masking blocks configured fields from being viewed in live traces or trace files, replacing sensitive data with asterisks.</li>
+                        <li>Configured using the Debug Mask Apigee API at the environment level.</li>
+                        <li>It's crucial to mask sensitive data like passwords and credit card numbers.</li>
+                    </ul>
+                </li>
+                <li><strong>Debug Mask Singleton:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>A single object in an Apigee environment that can be patched to define data masks.</li>
+                        <li>The payload for the Debug Mask specifies variables and JSONPath/XPath expressions for requests or responses to be masked.</li>
+                    </ul>
+                </li>
+                <li><strong>Private Variables:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Variables prefixed with `private.` (e.g., `private.password`).</li>
+                        <li>Values of private variables are automatically masked in traces when created or accessed.</li>
+                        <li>Important: If a private variable is assigned to another non-private variable, the value will become visible in the new variable.</li>
+                    </ul>
+                </li>
+                <li><strong>Key Value Maps (KVMs):</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Used to store non-expiring, configuration data that is retrieved at runtime, similar to property files.</li>
+                        <li>Keys and values are strings.</li>
+                        <li>Typically environment-scoped.</li>
+                        <li>Ideal for environment-specific configuration.</li>
+                        <li>Can be created/deleted using the Apigee API or console.</li>
+                        <li>Entries can be read/updated/deleted using the Apigee API or the KeyValueMapOperations policy.</li>
+                        <li>KVMs are encrypted, making them safe for sensitive data like backend credentials.</li>
+                        <li>Values can only be retrieved into private variables.</li>
+                    </ul>
+                </li>
+                <li><strong>KeyValueMapOperations Policy:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Used within a proxy to insert, update, and retrieve KVM entries.</li>
+                        <li>`MapName` specifies the KVM to access.</li>
+                        <li>`Scope` defaults to 'environment'.</li>
+                        <li>Uses 'Get' for retrieval and 'Put' for adding/updating entries.</li>
+                        <li>One or more Parameter fields are used to define the key.</li>
+                        <li>`ExpiryTimeInSecs` specifies how long to cache the entry.</li>
+                    </ul>
+                </li>
+                <li><strong>Property Sets:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Custom collections of key/value pairs stored in `.properties` files.</li>
+                        <li>Used for static, non-expiring data that should not be hardcoded.</li>
+                        <li>Can be scoped to an API proxy or all API proxies in an environment.</li>
+                        <li>Updating an API proxy-scoped property set requires redeployment.</li>
+                        <li>Accessed using flow variables (e.g., `propertyset.property_set_name.property_name`).</li>
+                    </ul>
+                </li>
+                <li><strong>Comparing KVMs and Property Sets:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>KVMs: Values are encrypted, can be updated dynamically by API proxies, and changes to proxy-scoped KVMs do not require redeployment. Best for sensitive or dynamic configuration.</li>
+                        <li>Property Sets: Values are stored in plaintext, cannot be updated dynamically by API proxies (except for environment-scoped which update without redeployment), and API proxy-scoped changes require redeployment. Simpler for static, non-sensitive configuration data and are often checked into code repositories.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section" id="api-mediation">
+            <h2 class="text-2xl font-semibold mb-4">7 API Mediation</h2>
+            <p>This document outlines key concepts and information related to API mediation using Apigee, covering various policies and best practices.</p>
+            <h3 class="text-xl font-medium mb-3">1. Introduction to API Mediation</h3>
+            <p>API mediation in Apigee involves transforming requests and responses and calling multiple services during a single API call to simplify app development and leverage backend services more effectively. This often involves the Apigee API proxy acting as an abstraction or facade layer for one or more backend services.</p>
+            <h3 class="text-xl font-medium mb-3">2. JSON, XML, and SOAP Support</h3>
+            <p>Apigee supports various data formats, including JSON, XML, and SOAP.</p>
+            <ul class="list-disc ml-6">
+                <li><strong>Content-Type Header (Reminder):</strong> The 'Content-Type' header is crucial as it specifies the format of payloads. If it's not correctly set (e.g., `application/json` for JSON), parsing by policies will be silently skipped. Always validate or set this header.</li>
+                <li><strong>Message Validation Policy:</strong> This policy validates messages and raises a fault if they don't conform to specified requirements. It can be used to:
+                    <ul class="list-circle ml-6">
+                        <li>Validate XML against XSD (XML Schema Definition) files.</li>
+                        <li>Validate SOAP against WSDL (Web Services Description Language) files.</li>
+                        <li>Confirm that JSON or XML is well-formed.</li>
+                    </ul>
+                </li>
+                <li>XSD and WSDL files must be stored in the proxy resources.</li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">3. Mediation Patterns</h3>
+            <h4 class="text-lg font-medium mb-2">Format Conversion</h4>
+            <p>Backend or third-party services often use different content types or payload formats than your API. Even if formats are the same (e.g., JSON), the payload structure might need rewriting.</p>
+            <ul class="list-disc ml-6">
+                <li><strong>ExtractVariables Policy:</strong> This policy extracts information from messages or variables and stores the results in variables for later use in your proxy.
+                    <ul class="list-circle ml-6">
+                        <li>Variables can be extracted from headers, query parameters, URI paths, or any existing variable.</li>
+                        <li>It supports multiple patterns for a particular location, evaluated in order, with the first match being used.</li>
+                        <li>For URI paths, variable matching cannot span multiple path segments.</li>
+                        <li>You can use indexing (e.g., `type.1`) to select specific occurrences of multiple headers or query parameters with the same name.</li>
+                        <li>Set `IgnoreUnresolvedVariables` to 'true' if some variables are optional; otherwise, an error will be raised if a match isn't found.</li>
+                        <li>Can extract data from JSON or XML payloads using JSONPath or XPath respectively.</li>
+                    </ul>
+                </li>
+                <li><strong>Assign Message Policy:</strong> This policy creates variables and HTTP messages.
+                    <ul class="list-circle ml-6">
+                        <li>Variables can be created by reference (`Ref`) or by value (`Value`).</li>
+                        <li>It can modify existing messages or create new ones using the `createNew` attribute of the `AssignTo` element.</li>
+                        <li>The `Set` element allows you to set fields in a message (verb, payload, headers, query/form parameters, status codes, request path).</li>
+                        <li>The `Remove` element allows you to remove fields from a message (specific headers or all query parameters).</li>
+                        <li>Operations within the policy are executed in order.</li>
+                    </ul>
+                </li>
+                <li><strong>Templates:</strong> Allow dynamic string substitution in certain policy and `TargetEndpoint` elements.
+                    <ul class="list-circle ml-6">
+                        <li>They use message template functions and variables (e.g., `timeFormatUTCMs`, `encodeBase64`, `jsonPath`).</li>
+                        <li>Many functions are available for string manipulation, hash calculation, random number generation, etc.</li>
+                    </ul>
+                </li>
+            </ul>
+            <h4 class="text-lg font-medium mb-2">3.2. Orchestration</h4>
+            <p>This pattern involves calling multiple services during a single API request/response.</p>
+            <ul class="list-disc ml-6">
+                <li>Combining multiple steps into a single operation can improve developer experience and reduce latency.</li>
+                <li>Adding data from third-party services can increase the utility of an API call.</li>
+                <li><strong>ServiceCallout Policy:</strong> Calls out to an external service during the request and response flows of a proxy.
+                    <ul class="list-circle ml-6">
+                        <li>Uses separate request and response message variables from the main proxy request and response.</li>
+                        <li>The request can be specified by variable or built within the policy.</li>
+                        <li>The response is specified as a variable that will be populated after the service call.</li>
+                        <li>You can specify a `Timeout` in milliseconds; if reached, the policy throws an error.</li>
+                        <li>The target for a service callout is configured similarly to a TargetEndpoint target.</li>
+                    </ul>
+                </li>
+                <li><strong>Proxy Chaining:</strong> Allows calling proxies deployed in the same organization and environment.
+                    <ul class="list-circle ml-6">
+                        <li>Uses `LocalTargetConnection` instead of `HTTPTargetConnection`.</li>
+                        <li>The called proxy can be specified by name and endpoint or by path.</li>
+                        <li>Calls using `Local TargetConnection` stay within the gateway, avoiding network hops and additional network connections.</li>
+                        <li>Can be used for `TargetEndpoints` and `ServiceCallouts`.</li>
+                        <li>A strategy for avoiding duplicate code, though shared flows are a more powerful method.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">4. Custom Code</h3>
+            <p>Apigee provides policies to write custom code within proxies.</p>
+            <ul class="list-disc ml-6">
+                <li>Supported Languages: JavaScript, Java, and Python (Jython 2.5.2).</li>
+                <li>Preference: Prefer configuration-based policies (e.g., `AssignMessage`, `ExtractVariables`) as they are optimized for efficiency and perform better.</li>
+                <li><strong>When to Use Custom Code:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>When needed functionality is not supported by configuration-based policies (e.g., iterating through and modifying complex payloads).</li>
+                        <li>When configuration-based implementation would be too complex or confusing.</li>
+                    </ul>
+                </li>
+            </ul>
+            <h4 class="text-lg font-medium mb-2">4.1. JavaScript Policy</h4>
+            <ul class="list-disc ml-6">
+                <li>Uses custom compiled server-side JavaScript.</li>
+                <li>References JavaScript code files stored in the proxy resources (e.g., `IncludeURL` for libraries, `ResourceURL` for the main file).</li>
+                <li>Allows getting, setting, and removing flow variables using `context.getVariable()`, `context.setVariable()`, and `context.removeVariable()`.</li>
+                <li>Useful for looping through and modifying JSON and XML payloads (e.g., parsing `request.content`, manipulating the object, and stringifying it back).</li>
+                <li>Can call multiple HTTP services in parallel using the `httpClient` object, which is an advantage over `ServiceCallout` for reducing latency.</li>
+                <li>`timeLimit` attribute specifies a timeout in milliseconds; if reached, execution stops and a fault is raised.</li>
+                <li>The `print()` function logs to the console in the Trace Tool for debugging.</li>
+                <li>For simple cases, code can be directly inserted into the `Source` element of the policy configuration file.</li>
+            </ul>
+            <h4 class="text-lg font-medium mb-2">4.2. JavaCallout Policy</h4>
+            <ul class="list-disc ml-6">
+                <li>Allows using custom Java code in proxies, offering very good performance.</li>
+                <li>Requires specifying the class to run within the configured Java JAR file (`ClassName` and `ResourceURL`).</li>
+                <li>Can specify a list of name-value properties that can be used within the Java code.</li>
+                <li><strong>Disadvantages:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Harder to maintain and debug as code is stored in compiled JAR files and needs to be compiled outside Apigee.</li>
+                        <li>Java code is not visible in trace and cannot log to the trace tool console.</li>
+                        <li>Most system calls are not allowed (e.g., network socket I/O, process/CPU/memory info, file system reads/writes).</li>
+                    </ul>
+                </li>
+                <li>Can access, create, update, and remove flow variables and message elements.</li>
+            </ul>
+            <h4 class="text-lg font-medium mb-2">4.3. Choosing Between Code Policies</h4>
+            <ul class="list-disc ml-6">
+                <li>First Choice: Configuration-based policies (`ExtractVariables`, `Assign Message`).</li>
+                <li>Second Choice (Most Custom Code Use Cases): JavaScript policy. It's pre-compiled, performs well, and is easy for parsing/modifying JSON/XML, especially with arrays, or when code is more intuitive.</li>
+                <li>Third Choice: JavaCallout when performance is the absolute highest priority (e.g., heavy cryptography) or when existing Java libraries are required.</li>
+                <li>Avoid: Python policy, as it's interpreted at runtime and can be slow, especially under heavy load.</li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">5. Shared Flows</h3>
+            <p>Shared flows provide a powerful method for sharing reusable logic between API proxies.</p>
+            <ul class="list-disc ml-6">
+                <li>Definition: A single flow of reusable logic containing policies, policy conditions, and resources.</li>
+                <li>Invocation: Cannot be invoked directly; must be called from a proxy or another shared flow.</li>
+                <li>Context: Executes within the context of the hosting proxy's flow, having read and write access to the proxy's flow variables (no need for message building/parsing).</li>
+                <li>Deployment: Hosted in an organization and deployed to an environment, similar to proxies. Can only be used by proxies or shared flows deployed to the same org/environment.</li>
+                <li>Benefits over Proxy Chaining: Generally better for sharing reusable logic because they execute within the hosting proxy's flow context.</li>
+                <li><strong>FlowCallout Policy:</strong> Invokes a shared flow.
+                    <ul class="list-circle ml-6">
+                        <li>Can be used in proxies or other shared flows.</li>
+                        <li>The shared flow must be deployed before the proxy or shared flow using it can be deployed.</li>
+                        <li>The `SharedFlowBundle` element specifies the name of the shared flow to call.</li>
+                        <li>Parameter elements can be added to create variables only visible during shared flow execution.</li>
+                        <li>When tracing the proxy, you have full access to trace information for the shared flow steps.</li>
+                    </ul>
+                </li>
+            </ul>
+            <h4 class="text-lg font-medium mb-2">5.1. Why Use Shared Flows?</h4>
+            <ul class="list-disc ml-6">
+                <li>Code Reuse: Easier and faster to write and debug a series of steps once, ensuring consistent task execution across proxies.</li>
+                <li>Maintenance: Easier to maintain code in one place rather than in multiple proxies. Changes can be applied centrally.</li>
+            </ul>
+        </div>
+
+        <div class="section" id="api-traffic-management">
+            <h2 class="text-2xl font-semibold mb-4">8 API Traffic Management</h2>
+            <p>This document summarizes key concepts and information regarding API traffic management using Apigee, covering rate limiting (Spike Arrest and Quota policies) and caching (General-Purpose and Response Caching).</p>
+            <h3 class="text-xl font-medium mb-3">1. API Traffic Management Overview</h3>
+            <p>API traffic management involves controlling and optimizing the flow of requests to your APIs. Apigee offers features to:</p>
+            <ul class="list-disc ml-6">
+                <li>Control Traffic Rate: Reject excessive API traffic to protect backend services.</li>
+                <li>Limit Requests: Set specific limits on the number of requests allowed over a defined period.</li>
+                <li>Reduce Unnecessary Traffic: Use caching to minimize calls to backend services, improving performance and reducing costs.</li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">2. Rate Limiting</h3>
+            <p>Rate limiting is the process of rejecting excess traffic to your API and backend services. Apigee provides two built-in types: Spike Arrest and Quota.</p>
+            <h4 class="text-lg font-medium mb-2">2.1. Spike Arrest</h4>
+            <p>The Spike Arrest policy protects backend services from sudden, large increases (spikes) in API traffic by limiting the allowed rate of requests. This is primarily a technical solution.</p>
+            <h5 class="text-base font-medium mb-1">How it Works:</h5>
+            <ul class="list-disc ml-6">
+                <li>Does not use a counter: Instead of counting requests, it keeps track of the time the last matching request was allowed.</li>
+                <li>Rejects requests: If a message processor allowed traffic for the same identifier too recently, the current request is rejected.</li>
+                <li>Status Code: Rejected traffic returns a `429 Too Many Requests` status code.</li>
+                <li>Identifier: Groups traffic that will be rate-limited together (e.g., by client ID). If no identifier is specified, it applies to all traffic.</li>
+                <li>Rate Element: Specifies how often traffic is allowed, either "per minute" (`pm`) or "per second" (`ps`).
+                    <ul class="list-circle ml-6">
+                        <li>`10ps` means 1 request per 100 milliseconds (10 requests per 1000ms).</li>
+                        <li>`30pm` means 1 request per 2 seconds (30 requests per 60 seconds).</li>
+                    </ul>
+                </li>
+                <li><strong>Token Bucket Algorithm:</strong> Spike Arrest is implemented using this algorithm to allow for small bursts of traffic without immediate rejection, while still maintaining the overall specified rate.
+                    <ul class="list-circle ml-6">
+                        <li>A "bucket" is filled with "tokens" at a constant rate (e.g., every 100ms for `10ps`).</li>
+                        <li>When a request is received, a token is consumed to allow the request. If no tokens are available, the request is rejected.</li>
+                        <li>The bucket size is calculated as $\max(\text{rate}/10,1)$. For `10ps`, the bucket size is 1. For `600pm` (equivalent to `10ps`), the bucket size is 60, allowing a burst of 60 requests.</li>
+                    </ul>
+                </li>
+            </ul>
+            <h4 class="text-lg font-medium mb-2">2.2. Quota</h4>
+            <p>The Quota policy limits the number of requests allowed for a specific entity over a specified period. This solves a business problem.</p>
+            <h5 class="text-base font-medium mb-1">How it Works:</h5>
+            <ul class="list-disc ml-6">
+                <li>Uses a counter: Tracks the number of accepted requests.</li>
+                <li>Rejects requests: Once the defined limit is reached, requests are rejected until the time period elapses and the counter resets to zero.</li>
+                <li>Does not control rate: Quotas do not protect against traffic spikes (e.g., all allowed requests for a month could be used in the first minute).</li>
+                <li>Status Code: Returns `429 Too Many Requests` for rejected requests.</li>
+                <li>Uniquely Identifies Counter: A combination of the proxy, policy, and Identifier value uniquely specifies a quota counter.</li>
+                <li><strong>Configuration Elements:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Allow: Number of allowed requests per time period.</li>
+                        <li>Interval: Number of time units in the period.</li>
+                        <li>TimeUnit: Unit of time (minute, hour, day, week, month).</li>
+                    </ul>
+                </li>
+                <li><strong>API Product Quota Settings:</strong> 'Allow', 'Interval', and 'TimeUnit' can be dynamically set using variables populated from API product quota settings, enabling different service levels (e.g., Basic vs. Premium). The `UseQuota ConfigInAPIProduct` element simplifies this configuration.</li>
+                <li><strong>Quota Types:</strong> Specifies when the quota time period starts and resets.
+                    <ul class="list-circle ml-6">
+                        <li>Default: Starts at the beginning of the next GMT minute/hour/day/etc. and resets every interval.</li>
+                        <li>Calendar: Explicit start time (`StartTime` element).</li>
+                        <li>Flexi: Begins when the first message is received by the policy.</li>
+                        <li>Rolling Window: Counts requests over a time period ending at the current request time (e.g., 100 requests in the past 2 hours).</li>
+                    </ul>
+                </li>
+                <li><strong>Distributed Quotas:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>`Distributed=false` (default): Separate counter for each message processor.</li>
+                        <li>`Distributed=true`: A shared counter is used across all message processors (more common).</li>
+                    </ul>
+                </li>
+                <li><strong>Synchronous vs. Asynchronous (with Distributed=true):</strong>
+                    <ul class="list-circle ml-6">
+                        <li>`Synchronous=true`: Counter updates immediately. Can introduce significant latencies, especially under load. Less likely to allow extra requests.</li>
+                        <li>`Synchronous=false`: Counter updates periodically. May allow a few extra requests due to synchronization frequency. Recommended for most use cases if tolerating extra requests.</li>
+                        <li>Asynchronous Configuration: `SyncMessageCount` (syncs after N requests) and `SyncIntervalInSeconds` (syncs every N seconds, minimum 10 seconds). Default is every 10 seconds if no configuration is specified.</li>
+                    </ul>
+                </li>
+                <li><strong>MessageWeight:</strong> Modifies the impact of a request against the quota. A MessageWeight of 2 counts as two requests (default is 1). Useful for batch requests where each item should count against the quota.</li>
+            </ul>
+            <h4 class="text-lg font-medium mb-2">2.3. ResetQuota Policy</h4>
+            <p>The `ResetQuota` policy is used to decrease the number of counted requests in a quota counter, effectively giving back allowance without regard to the regular quota time period.</p>
+            <ul class="list-disc ml-6">
+                <li>Configuration: Specifies the `Quota` policy name and `Identifier` value to update. Use default if no identifier is used in the Quota policy.</li>
+                <li>Allow Element: A required configuration that specifies the number of counted requests to be removed from the current count.</li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">3. Caching</h3>
+            <p>Caching stores data temporarily to reduce the need for repeated fetching from the original source. In Apigee, caching can persist state between calls and eliminate unnecessary backend service calls.</p>
+            <p>Benefits: Improve backend stability, improve call latency, reduce cost of metered services.</p>
+            <h4 class="text-lg font-medium mb-2">Cache Structure: Apigee uses a two-level cache:</h4>
+            <ul class="list-disc ml-6">
+                <li><strong>L1 Cache (In-Memory):</strong> Located in each message processor. Checked first, very fast. Caches entries for a short period (currently 1 second). Least recently used entries are removed if the cache fills up.</li>
+                <li><strong>L2 Cache (Runtime Data Store):</strong> Persisted in a database (Cassandra). Slower than L1 but faster than network calls. Entries are removed based on their Time-To-Live (TTL) or if the maximum number of entries is reached. When an L2 entry is read, it's copied to the L1 cache.</li>
+                <li>Entry Updates/Deletes: When an entry is updated or deleted by a message processor, it affects both its L1 cache and the shared L2 data store. Other message processors' L1 caches might hold stale data until their TTL expires.</li>
+                <li>Multi-Region: L2 changes are propagated via database replication. Consider stale L1 data and L2 replication delays in multi-region architectures.</li>
+                <li>Automatic L1 Caching: Apigee automatically caches OAuth access tokens, developers, developer apps, API products, and their custom attributes in L1 cache for 180 seconds.</li>
+            </ul>
+            <h4 class="text-lg font-medium mb-2">3.1. General-Purpose Caching Policies</h4>
+            <p>These policies are used to store and retrieve arbitrary strings.</p>
+            <h5 class="text-base font-medium mb-1">PopulateCache Policy: Adds an entry to a cache.</h5>
+            <ul class="list-disc ml-6">
+                <li>CacheResource: Logical name of the cache (implicitly created, scoped at environment level).</li>
+                <li>CacheKey: Generated from a `Prefix` and `KeyFragment`'s. Double underscores are used as separators.
+                    <ul class="list-circle ml-6">
+                        <li>`Prefix`: Scopes the entry so it can only be retrieved using the same prefix.</li>
+                        <li>`Scope`: Used if `Prefix` is not set, automatically generates a prefix based on the scope:
+                            <ul class="list-square ml-6">
+                                <li>`Global`: Accessible by all proxies in the environment (`org_env`).</li>
+                                <li>`Application`: Accessible by all endpoints in the current proxy (`org_env_proxy`).</li>
+                                <li>`Exclusive`: Accessible only by the current proxy and endpoint (`org_env_proxy_endpoint`).</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>ExpirySettings: Sets the entry's expiration by date (`Expiry Date`), time of day (`TimeOfDay`), or number of seconds (`TimeoutInSeconds`).</li>
+                <li>Source: Name of the variable containing the string value to be stored.</li>
+            </ul>
+            <h5 class="text-base font-medium mb-1">LookupCache Policy: Looks for an entry in a cache.</h5>
+            <ul class="list-disc ml-6">
+                <li>Uses the same `CacheResource`, `CacheKey` (with `Prefix` or `Scope`) as `PopulateCache`.</li>
+                <li>AssignTo: Name of the output variable to populate with the retrieved value.</li>
+                <li>CacheLookup TimeoutInSeconds: Timeout for the cache lookup.</li>
+            </ul>
+        </div>
+
+        <div class="section" id="api-publishing-developer-portals">
+            <h2 class="text-2xl font-semibold mb-4">9 API Publishing and Developer Portals</h2>
+            <p>This document summarizes key concepts regarding API publishing, API versioning, and developer portals, based on the provided material.</p>
+            <h3 class="text-xl font-medium mb-3">API Versioning</h3>
+            <p>API versioning is a crucial aspect of API management, serving as a contract between the API provider and its consumers.</p>
+            <h4 class="text-lg font-medium mb-2">What API Versioning Is NOT:</h4>
+            <ul class="list-disc ml-6">
+                <li>Not an indicator of internal release version: API versions are distinct from internal software release cycles or API proxy revisions. Consumers are not concerned with internal development specifics.</li>
+                <li>Not something to do frequently: Changing an API's version has a significant impact on consumers, often requiring changes in their applications. Most API modifications can be made without updating the version.</li>
+            </ul>
+            <h4 class="text-lg font-medium mb-2">What API Versioning IS:</h4>
+            <ul class="list-disc ml-6">
+                <li>A contract: Once an app is built against a specific API version, it should continue to function even if the API's functionality is enhanced or altered, as long as backward-compatibility is maintained.</li>
+                <li>A way to communicate breaking changes: A new API version should only be introduced when breaking changes occur. These include adding new required inputs to requests or removing previously available data from responses.</li>
+                <li><strong>URL-based Versioning Scheme:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>A common approach where the API version is specified in the URL (e.g., `hostname/api/version/resources`).</li>
+                        <li>Version APIs separately: If you have multiple APIs, they should generally be versioned independently.</li>
+                        <li>Avoid minor versions: Minor versions (e.g., 1.2) imply frequent or incremental changes, which contradicts the infrequent and impactful nature of API version changes.</li>
+                        <li>APIs might always be version 1: An API can remain at version 1 even with changes, as long as those changes maintain backward-compatibility.</li>
+                        <li>Consistency is key: While URL-based versioning is common, consistency across your APIs is most important, regardless of the chosen scheme.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">Version Lifecycle and Deprecation</h3>
+            <p>Managing multiple API versions and deprecating older ones requires a structured approach to minimize disruption for developers.</p>
+            <ul class="list-disc ml-6">
+                <li>Limit live versions: It's generally recommended to have no more than two live versions of an API available simultaneously. Maintaining too many active versions is difficult and discourages upgrades.</li>
+                <li>Transition period: Aim for a transition period of no more than six months before fully deprecating an older version. This provides sufficient time for developers to make necessary adjustments.</li>
+                <li><strong>Phases of upgrade and deprecation:</strong>
+                    <ol class="list-decimal ml-6">
+                        <li>Announce: Communicate the upcoming new version to the developer community. Provide details on changes, reasons for the changes, and availability. Highlight any benefits for developers and explain the upgrade process.</li>
+                        <li>Launch & Maintain: Launch the new API version and continue to promote it. Address any issues that arise during usage or upgrading promptly to ensure a smooth transition for developers.</li>
+                        <li>Deprecate: Clearly communicate the deprecation date for the previous version. Monitor analytics to identify apps still using the old version and reach out to developers to encourage migration before their apps stop working. Eventually, the old version can be completely turned off, with error messages directing users to the new version.</li>
+                    </ol>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">Developer Portals</h3>
+            <p>Developer portals are essential for enabling app developers to discover, learn about, and integrate with your APIs.</p>
+            <ul class="list-disc ml-6">
+                <li>App developers as customers: APIs should be designed with the app developer in mind, treating them as customers.</li>
+                <li><strong>Purpose of developer portals:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Learn about service offerings: Developers can understand the APIs available and their service levels.</li>
+                        <li>Learn how to use APIs: Portals provide comprehensive, live documentation, often created by linking OpenAPI specifications to published API products.</li>
+                        <li>Register apps: Developers can self-service register their applications to use your API products.</li>
+                        <li>Minimize time to first app: Rich documentation and self-signup processes accelerate a developer's ability to build an app using the API.</li>
+                    </ul>
+                </li>
+                <li><strong>Types of developer portals:</strong>
+                    <ul class="list-circle ml-6">
+                        <li>Integrated portal: A lightweight, self-service portal, often hosted by API management platforms like Apigee.</li>
+                        <li>Drupal 8 portal: A fully customizable self-service portal built using Drupal, an enterprise-level content management system. It integrates with API management platforms using specific modules, offering high flexibility but requiring more effort.</li>
+                        <li>Do-it-yourself custom portal: Building a portal from scratch on any platform and integrating it using API management APIs. This option offers maximum flexibility but demands a very high level of effort and complexity.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">Quiz Review (Key takeaway from the quiz)</h3>
+            <p>The version of an API should be changed when there are breaking changes, such as adding a new required parameter to an existing API call. It is not tied to proxy revisions, adding new resources, or backend service version changes.</p>
+        </div>
+
+        <div class="section" id="logging-analytics">
+            <h2 class="text-2xl font-semibold mb-4">10 Logging and Analytics</h2>
+            <h3 class="text-xl font-medium mb-3">Message Logging</h3>
+            <p>Message logging is used to record events that happen during an API call. It helps in tracking down issues in APIs.</p>
+            <ul class="list-disc ml-6">
+                <li><strong>MessageLogging Policy:</strong> This policy is used within an API proxy to create custom log entries.
+                    <ul class="list-circle ml-6">
+                        <li>It can send log entries to a remote Syslog server, which is a standard protocol for message logging.</li>
+                        <li>Messages can also be logged to Google Cloud Logging.</li>
+                        <div class="code-block">
+                            <pre>&lt;MessageLogging async="false" continueOnError="false" name="ML-LogToCloudLogging"&gt;
+ &lt;CloudLogging&gt;true&lt;/CloudLogging&gt;
+&lt;/MessageLogging&gt;</pre>
+                        </div>
+                    </ul>
+                </li>
+                <li>`continueOnError` Attribute: In a MessageLogging policy, it's best practice to set `continueOnError` to 'true'. This ensures that if the logging policy fails, the API call still proceeds, preventing the API call from failing just because logging couldn't occur. By default, this attribute is 'false'.</li>
+                <li>Syslog Element: This element within the MessageLogging policy contains the necessary information for sending the log entry using the Syslog standard.</li>
+                <li>Message Element: This element holds the custom log message. You can include variables in the message by enclosing their names in curly braces (e.g., `{organization.name}`).</li>
+                <li>Destination: The 'Host', 'Port', and 'Protocol' elements specify where the log message is sent. The protocol can be TCP or UDP. TCP messages can be encrypted over TLS if `SSLInfo` is enabled.</li>
+                <li><strong>PostClientFlow:</strong> This is a specific flow in the API proxy used for logging messages. It runs after the client has already received its response, any policies inside it cannot modify the response. It has access to all the final flow variables, such as `client.sent.start.timestamp` and `client.sent.end.timestamp`, which are needed to calculate the total transaction time.
+                    <ul class="list-circle ml-6">
+                        <li>MessageLogging policies placed here are executed after the response has been sent to the client.</li>
+                        <li>This is highly recommended because it prevents logging from adding to the API call latency.</li>
+                        <li>Other types of policies placed in the PostClientFlow will be ignored.</li>
+                        <div class="code-block">
+                            <pre>&lt;PostClientFlow&gt; &lt;Response&gt; &lt;Step&gt; &lt;Name&gt;ML-LogTheFull Transaction&lt;/Name&gt; &lt;/Step&gt;
+ &lt;/Response&gt; &lt;/PostClientFlow&gt;</pre>
+                        </div>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-medium mb-3">Analytics</h3>
+            <p>Apigee Analytics provides insights into your API program and helps track API performance. The DataCapture policy can be used to save custom data for use in Analytics reports.</p>
+
+            <h3 class="text-xl font-medium mb-3">Beyond REST</h3>
+            <h4 class="text-lg font-medium mb-2">gRPC</h4>
+            <p>gRPC, which stands for gRPC Remote Procedure Call (where the "g" playfully changes with each version), is a modern, high-performance, open-source framework developed by Google. It's designed to enable efficient communication between services, particularly in distributed systems like microservices architectures.</p>
+            <h5 class="text-base font-medium mb-1">What is gRPC?</h5>
+            <p>Simple and Clear Explanation:</p>
+            <p>At its core, gRPC is an RPC (Remote Procedure Call) framework. This means it allows a program to call a function or method in another program located on a different machine (a "remote" machine) as if it were a local function call. gRPC handles all the complexities of network communication, data serialization, and deserialization behind the scenes.</p>
+            <p>Think of it like this: If you have a function `getUserProfile(userId)` in one service (say, a user service) and another service (say, an order service) needs to get user profile details, instead of making an HTTP request to `GET /users/{userId}`, the order service can directly "call" `getUserProfile(userId)` as if it were a local function. gRPC takes care of sending that "call" over the network to the user service and bringing the result back.</p>
+            <h5 class="text-base font-medium mb-1">Key Features that Make gRPC Powerful:</h5>
+            <ol class="list-decimal ml-6">
+                <li><strong>HTTP/2 as Transport:</strong> Unlike traditional REST APIs that often use HTTP/1.1, gRPC is built on HTTP/2. This brings significant benefits:
+                    <ul class="list-disc ml-6">
+                        <li>Multiplexing: Multiple requests and responses can be sent concurrently over a single TCP connection, reducing overhead and improving latency.</li>
+                        <li>Header Compression: HPACK compression reduces the size of request and response headers.</li>
+                        <li>Server Push: (Though less directly used in typical RPCs, it's an HTTP/2 feature).</li>
+                    </ul>
+                </li>
+                <li><strong>Protocol Buffers (Protobuf) for Data Serialization:</strong>
+                    <ul class="list-disc ml-6">
+                        <li>Interface Definition Language (IDL): You define your service methods and message structures in `.proto` files using Protobuf's IDL. This acts as a contract between client and server.</li>
+                        <li>Binary Format: Protobuf serializes structured data into a compact, efficient binary format (not human-readable like JSON or XML). This makes messages smaller and faster to transmit and parse, contributing to gRPC's high performance.</li>
+                        <li>Code Generation: From the proto file, gRPC tools automatically generate client "stubs" and server "skeletons" in various programming languages (Java, Python, Go, C++, Node.js, etc.). This means developers don't write boilerplate code for networking or serialization, saving time and reducing errors.</li>
+                    </ul>
+                </li>
+                <li><strong>Streaming Capabilities:</strong> Beyond simple request-response (unary calls), gRPC supports various streaming patterns:
+                    <ul class="list-disc ml-6">
+                        <li>Server-side streaming: Client sends one request, server sends back a stream of responses.</li>
+                        <li>Client-side streaming: Client sends a stream of requests, server sends back one response.</li>
+                        <li>Bidirectional streaming: Both client and server send independent streams of messages concurrently, enabling real-time communication (e.g., for chat applications or live data feeds).</li>
+                    </ul>
+                </li>
+            </ol>
+            <h5 class="text-base font-medium mb-1">Example:</h5>
+            <p>Let's define a simple Greeter service in a proto file:</p>
+            <div class="code-block">
+                <pre>// greeter.proto
+syntax = "proto3";
+
+package helloworld;
+
+// The greeting service definition.
+service Greeter {
+  // Sends a greeting
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+
+// The request message containing the user's name.
+message HelloRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings.
+message HelloReply {
+  string message = 1;
+}</pre>
+            </div>
+            <h5 class="text-base font-medium mb-1">How it works:</h5>
+            <ol class="list-decimal ml-6">
+                <li>Define (.proto): You define the Greeter service and Hello Request/Hello Reply messages in `greeter.proto`.</li>
+                <li>Generate Code: You use the `protoc` compiler (with gRPC plugins) to generate client and server code in your chosen language (e.g., Python, Java).</li>
+                <li>Implement Server: In your server-side code, you implement the `SayHello` method as defined in the Greeter service.</li>
+                <div class="code-block">
+                    <pre># Simplified Python server implementation
+class GreeterServicer(greeter_pb2_grpc.GreeterServicer):
+    def SayHello(self, request, context):
+        return greeter_pb2.HelloReply(message=f"Hello, {request.name}!")</pre>
+                </div>
+                <li>Implement Client: In your client-side code, you create a gRPC channel to the server and use the generated client stub to call the `SayHello` method as if it were a local function.</li>
+                <div class="code-block">
+                    <pre># Simplified Python client implementation
+with grpc.insecure_channel('localhost:50051') as channel:
+    stub = greeter_pb2_grpc.GreeterStub(channel)
+    response = stub.SayHello(greeter_pb2.HelloRequest(name='World'))
+    print("Greeter client received: " + response.message)</pre>
+                </div>
+            </ol>
+            <p>When the client calls `stub.SayHello()`, gRPC handles:</p>
+            <ul class="list-disc ml-6">
+                <li>Serializing HelloRequest to binary.</li>
+                <li>Sending it over HTTP/2 to the server.</li>
+                <li>The server deserializing it, executing its SayHello implementation.</li>
+                <li>The server serializing HelloReply to binary.</li>
+                <li>Sending it back to the client over HTTP/2.</li>
+                <li>The client deserializing it into a HelloReply object.</li>
+            </ul>
+            <h5 class="text-base font-medium mb-1">gRPC vs. REST</h5>
+            <table class="min-w-full bg-white rounded-lg shadow overflow-hidden">
+                <thead>
+                    <tr>
+                        <th class="py-2 px-4 border-b">Feature</th>
+                        <th class="py-2 px-4 border-b">gRPC</th>
+                        <th class="py-2 px-4 border-b">REST</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="py-2 px-4 border-b">Protocol</td>
+                        <td class="py-2 px-4 border-b">HTTP/2 (native)</td>
+                        <td class="py-2 px-4 border-b">HTTP/1.1 (commonly), can use HTTP/2</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4 border-b">Data Format</td>
+                        <td class="py-2 px-4 border-b">Protocol Buffers (binary)</td>
+                        <td class="py-2 px-4 border-b">JSON, XML (text-based)</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4 border-b">API Design</td>
+                        <td class="py-2 px-4 border-b">Service/Function-oriented (RPC)</td>
+                        <td class="py-2 px-4 border-b">Resource-oriented (nouns with HTTP verbs)</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4 border-b">Communication</td>
+                        <td class="py-2 px-4 border-b">Unary, Server Streaming, Client Streaming, Bidirectional Streaming</td>
+                        <td class="py-2 px-4 border-b">Unary (request/response)</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4 border-b">Performance</td>
+                        <td class="py-2 px-4 border-b">Generally higher (binary, HTTP/2)</td>
+                        <td class="py-2 px-4 border-b">Generally lower (text, more overhead per request)</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4 border-b">Code Generation</td>
+                        <td class="py-2 px-4 border-b">Built-in (client/server stubs)</td>
+                        <td class="py-2 px-4 border-b">Not built-in, often requires manual parsing/libraries</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4 border-b">Coupling</td>
+                        <td class="py-2 px-4 border-b">Tightly coupled (requires .proto file on both ends)</td>
+                        <td class="py-2 px-4 border-b">Loosely coupled (can evolve independently)</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4 border-b">Browser Support</td>
+                        <td class="py-2 px-4 border-b">Limited (requires gRPC-web gateway)</td>
+                        <td class="py-2 px-4 border-b">Native (built into browsers)</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4 border-b">Readability</td>
+                        <td class="py-2 px-4 border-b">Binary (less human-readable)</td>
+                        <td class="py-2 px-4 border-b">Human-readable (JSON/XML)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h5 class="text-base font-medium mb-1">Apigee Support for gRPC</h5>
+            <p>Apigee X (the cloud-native version on GCP) offers support for managing gRPC APIs, though with some specific considerations due to the nature of gRPC's binary communication.</p>
+            <p>Simple and Clear Explanation of Apigee's gRPC Support:</p>
+            <p>Apigee primarily provides passthrough support for gRPC. This means that while Apigee can act as a gateway for gRPC traffic, routing it from the client to your gRPC backend service, it generally does not inspect or modify the binary gRPC payload itself in the same way it can with text-based REST (JSON/XML) payloads.</p>
+            <h5 class="text-base font-medium mb-1">How Apigee Manages gRPC:</h5>
+            <ol class="list-decimal ml-6">
+                <li>gRPC API Proxy: You create an Apigee API Proxy specifically configured for gRPC traffic. This proxy exposes a public endpoint that clients can call.</li>
+                <li>TargetServer for gRPC Backend: You define a TargetServer in Apigee that points to your actual gRPC backend service. This TargetServer must have its protocol set to GRPC.</li>
+                <li>Unary gRPC Requests: Currently, Apigee's direct gRPC proxy support primarily focuses on unary (request-response) gRPC calls. While HTTP/2 streams are used for the transport, Apigee treats the gRPC message as an opaque binary blob for direct proxying.</li>
+                <li>No Payload Transformation Policies: Because Apigee doesn't parse the gRPC binary payload by default, policies that directly modify the request or response body (like XSLTTransform, JSONTOXML, ExtractVariables on content, AssignMessage to build a new body) cannot be used with gRPC proxies.</li>
+                <li>Traffic Management & Security: You can still apply many Apigee policies based on metadata, headers, or other non-payload-affecting aspects:
+                    <ul class="list-disc ml-6">
+                        <li>API Key Verification: Use VerifyAPIKey policy.</li>
+                        <li>OAuth2: Use OAuthV2 policy.</li>
+                        <li>Quotas: Apply Quota policies (these will count total gRPC requests).</li>
+                        <li>Spike Arrest: Use SpikeArrest policy.</li>
+                        <li>CORS: Apply CORS policy.</li>
+                    </ul>
+                </li>
+                <li>Contextual Information: Apigee exposes specific flow variables for gRPC, such as `request.grpc.rpc.name` (the name of the RPC method called) and `request.grpc.service.name` (the name of the gRPC service). You can use these variables in conditional flows or for analytics.</li>
+                <li>Analytics: Apigee captures analytics for gRPC traffic, allowing you to monitor `x_apigee_grpc_rpc_name`, `x_apigee_grpc_service_name`, and `x_apigee_grpc_status`.</li>
+                <li>ExternalCallout Policy (for advanced scenarios): For situations where you do need to inspect or modify gRPC payloads, or implement custom logic, Apigee offers the External Callout policy. This policy allows your API proxy to make a gRPC call to a custom gRPC server (which you implement and host) from within the proxy flow. Your custom gRPC server can then receive flow variables, perform operations (including parsing the gRPC payload if you pass it), and return modified variables or a response to Apigee. This gives you immense flexibility but requires external development.</li>
+            </ol>
+            <h5 class="text-base font-medium mb-1">Example: Securing a gRPC API with Apigee</h5>
+            <p>Let's say you have a gRPC backend service at `my-grpc-backend.com:8080`.</p>
+            <ol class="list-decimal ml-6">
+                <li>Define TargetServer:
+                    <div class="code-block">
+                        <pre>&lt;TargetServer name="my-grpc-backend-server"&gt;
+  &lt;Host&gt;my-grpc-backend.com&lt;/Host&gt;
+  &lt;Port&gt;8080&lt;/Port&gt;
+  &lt;IsEnabled&gt;true&lt;/IsEnabled&gt;
+  &lt;Protocol&gt;GRPC&lt;/Protocol&gt;
+&lt;/TargetServer&gt;</pre>
+                    </div>
+                </li>
+                <li>Create gRPC API Proxy (simplified):
+                    <div class="code-block">
+                        <pre>&lt;ProxyEndpoint name="default"&gt;
+  &lt;HTTPProxyConnection&gt;
+    &lt;BasePath&gt;/my-grpc-service&lt;/BasePath&gt;
+    &lt;VirtualHost&gt;default&lt;/VirtualHost&gt;
+  &lt;/HTTPProxyConnection&gt;
+  &lt;Flows&gt;
+    &lt;PreFlow name="PreFlow" &gt;
+      &lt;Request&gt;
+        &lt;Step&gt;
+          &lt;Name&gt;VerifyAPIKey&lt;/Name&gt;
+        &lt;/Step&gt;
+        &lt;Step&gt;
+          &lt;Name&gt;QuotaPolicy&lt;/Name&gt;
+        &lt;/Step&gt;
+      &lt;/Request&gt;
+      &lt;Response/&gt;
+    &lt;/PreFlow&gt;
+  &lt;/Flows&gt;
+  &lt;TargetEndpoint&gt;
+    &lt;HTTPTargetConnection&gt;
+      &lt;URL&gt;grpc://my-grpc-backend-server&lt;/URL&gt;
+    &lt;/HTTPTargetConnection&gt;
+  &lt;/TargetEndpoint&gt;
+&lt;/ProxyEndpoint&gt;</pre>
+                    </div>
+                </li>
+            </ol>
+            <p>Now, when a gRPC client calls `https://your-apigee-domain.com/my-grpc-service` (the Apigee proxy endpoint), Apigee will:</p>
+            <ol class="list-decimal ml-6">
+                <li>Receive the gRPC request (which is over HTTP/2).</li>
+                <li>Execute the VerifyAPIKey policy to ensure a valid API key is present.</li>
+                <li>Execute the QuotaPolicy to enforce rate limits.</li>
+                <li>Proxy the gRPC request (the binary payload) directly to your `my-grpc-backend.com:8080` gRPC service.</li>
+                <li>Receive the gRPC response from your backend and send it back to the client.</li>
+            </ol>
+            <p>This demonstrates how Apigee provides a powerful and flexible layer to manage, secure, and monitor your gRPC services, even with its passthrough model for the binary content.</p>
+
+            <h4 class="text-lg font-medium mb-2">GraphQL</h4>
+            <p>GraphQL is a powerful and increasingly popular alternative to traditional REST APIs, particularly for applications that need flexible data fetching and aggregation. Apigee, as a comprehensive API management platform, has strong support for managing GraphQL APIs.</p>
+            <p>Let's break down GraphQL itself and then how Apigee fits in.</p>
+            <h5 class="text-base font-medium mb-1">What is GraphQL?</h5>
+            <p>Simple and Clear Explanation:</p>
+            <p>GraphQL is a query language for your API and a runtime for fulfilling those queries with your existing data. Unlike REST, where you typically hit multiple endpoints to get different pieces of data (and often get more data than you need), GraphQL allows clients to:</p>
+            <ol class="list-decimal ml-6">
+                <li>Request exactly what they need: Clients specify the exact data fields they want from a single endpoint, reducing "over-fetching" (getting too much data) and "under-fetching" (needing multiple requests to get all necessary data).</li>
+                <li>Get predictable results: The structure of the GraphQL query often mirrors the structure of the JSON response, making it very intuitive.</li>
+                <li>Define a schema: GraphQL APIs are built around a strongly typed schema that describes all possible data and operations. This schema acts as a contract between the client and server, enabling powerful introspection and tooling (like auto-completion in IDEs).</li>
+                <li>Use a single endpoint: All GraphQL operations (queries, mutations, subscriptions) typically go to a single URL via an HTTP POST request.</li>
+            </ol>
+            <h5 class="text-base font-medium mb-1">Example:</h5>
+            <p>Imagine you have a backend with users, products, and orders.</p>
+            <p>REST approach:</p>
+            <p>To get a user's name, their last 3 orders, and the names of the products in those orders, you might need:</p>
+            <ul class="list-disc ml-6">
+                <li>`GET /users/{id}` (to get user name, but maybe also full address, email, etc.)</li>
+                <li>`GET /users/{id}/orders` (to get all orders)</li>
+                <li>For each order, `GET /orders/{orderId}/products` (to get product details)</li>
+            </ul>
+            <p>This results in multiple HTTP requests and potential over-fetching of data.</p>
+            <p>GraphQL approach:</p>
+            <p>With GraphQL, you could make a single POST request to `your-graphql-api.com/graphql` with a query like this:</p>
+            <div class="code-block">
+                <pre>query GetUserData {
+  user(id: "123") {
+    name
+    orders(last: 3) {
+      id
+      totalAmount
+      products {
+        name
+      }
+    }
+  }
+}</pre>
+            </div>
+            <p>The response would be exactly what you asked for:</p>
+            <div class="code-block">
+                <pre>{
+  "data": {
+    "user": {
+      "name": "Alice",
+      "orders": [
+        {
+          "id": "order-001",
+          "totalAmount": 120.50,
+          "products": [
+            { "name": "Laptop" },
+            { "name": "Mouse" }
+          ]
+        },
+        {
+          "id": "order-002",
+          "totalAmount": 50.00,
+          "products": [
+            { "name": "Keyboard" }
+          ]
+        },
+        {
+          "id": "order-003",
+          "totalAmount": 25.00,
+          "products": [
+            { "name": "Webcam" }
+          ]
+        }
+      ]
+    }
+  }
+}</pre>
+            </div>
+            <p>This demonstrates the efficiency and flexibility of GraphQL.</p>
+            <h5 class="text-base font-medium mb-1">Apigee Support for GraphQL</h5>
+            <p>Simple and Clear Explanation:</p>
+            <p>Apigee provides native support for managing GraphQL APIs, treating them as first-class citizens alongside REST APIs. This means you can apply Apigee's robust API management capabilities - such as security, traffic management, analytics, and developer monetization - to your GraphQL endpoints.</p>
+            <p>Apigee sits in front of your GraphQL backend server (which is responsible for "resolving" the data by fetching it from databases, other REST APIs, microservices, etc.). Apigee acts as the gateway, providing essential management features before the GraphQL query even reaches your resolver logic.</p>
+            <h5 class="text-base font-medium mb-1">Key Apigee features for GraphQL:</h5>
+            <ol class="list-decimal ml-6">
+                <li><strong>GraphQL Policy:</strong> This is a specialized policy in Apigee designed specifically for GraphQL requests. It allows you to:
+                    <ul class="list-disc ml-6">
+                        <li>Parse: Extract the GraphQL operation type (query, mutation, subscription), operation name, and fragment names into flow variables. This is crucial for applying conditional policies.</li>
+                        <li>Verify: Validate the incoming GraphQL request payload against a pre-uploaded GraphQL schema. This ensures only schema-compliant requests reach your backend, saving backend CPU cycles and preventing malformed queries.</li>
+                        <li>Impose restrictions: Control query complexity by setting limits on:
+                            <ul class="list-circle ml-6">
+                                <li>MaxDepth: The maximum nesting level of a query. This prevents overly deep and potentially expensive queries.</li>
+                                <li>MaxCount: The maximum number of fragments (or distinct fields) in a query. This prevents overly broad queries that could return too much data.</li>
+                            </ul>
+                        </li>
+                        <li>Integrate with other policies: Once parsed, you can use standard Apigee policies based on the extracted GraphQL variables.</li>
+                    </ul>
+                </li>
+                <li><strong>Security (API Keys, OAuth2):</strong> You can secure your GraphQL API proxies using VerifyAPIKey and OAuthV2 policies, just like with REST. Apigee handles the authentication at the API gateway level before forwarding the request to your GraphQL backend.</li>
+                <li><strong>Traffic Management (Quotas, Spike Arrest):</strong> Apply quotas to GraphQL API Products and Spike Arrest policies to protect your GraphQL backend from traffic surges. These policies can be applied to the entire GraphQL API or even conditionally based on the parsed GraphQL operation type.</li>
+                <li><strong>API Products & Developer Portal:</strong> Bundle your GraphQL APIs into API Products, expose them through a Developer Portal, and manage developer access and subscriptions. The Developer Portal can even embed a GraphQL Explorer (GraphiQL), allowing developers to interactively build and test queries against your schema.</li>
+                <li><strong>Analytics:</strong> Gain insights into your GraphQL API usage, traffic patterns, and performance, just like with REST APIs. Apigee's analytics can show you which GraphQL operations are most popular, their latency, and error rates.</li>
+            </ol>
+            <h5 class="text-base font-medium mb-1">Example: Using the Apigee GraphQL Policy</h5>
+            <p>Let's say you have a GraphQL API and want to prevent excessively deep queries, validate against your schema, and apply a quota.</p>
+            <p>Apigee Proxy Flow (PreFlow, simplified):</p>
+            <div class="code-block">
+                <pre>&lt;Flow name="GraphQLRequestFlow"&gt;
+  &lt;Request&gt;
+    &lt;Step&gt;&lt;Name&gt;VerifyAPIKey&lt;/Name&gt;&lt;/Step&gt;
+    &lt;Step&gt;
+      &lt;Name&gt;GraphQLValidation&lt;/Name&gt;
+    &lt;/Step&gt;
+    &lt;Step&gt;
+      &lt;Name&gt;Quota-for-Queries&lt;/Name&gt;
+      &lt;Condition&gt;graphql.operation.type = "query"&lt;/Condition&gt;
+    &lt;/Step&gt;
+    &lt;Step&gt;
+      &lt;Name&gt;Quota-for-Mutations&lt;/Name&gt;
+      &lt;Condition&gt;graphql.operation.type = "mutation"&lt;/Condition&gt;
+    &lt;/Step&gt;
+  &lt;/Request&gt;
+  &lt;Response/&gt;
+&lt;/Flow&gt;</pre>
+            </div>
+            <p>GraphQLValidation Policy (XML):</p>
+            <div class="code-block">
+                <pre>&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
+&lt;GraphQL name="GraphQLValidation"&gt;
+  &lt;DisplayName&gt;GraphQL Validation and Parsing&lt;/DisplayName&gt;
+  &lt;Action&gt;parse_verify&lt;/Action&gt;
+  &lt;SchemaFile&gt;myGraphQLSchema.graphql&lt;/SchemaFile&gt;
+  &lt;MaxDepth&gt;8&lt;/MaxDepth&gt;
+  &lt;MaxCount&gt;50&lt;/MaxCount&gt;
+&lt;/GraphQL&gt;</pre>
+            </div>
+            <h5 class="text-base font-medium mb-1">Explanation:</h5>
+            <ol class="list-decimal ml-6">
+                <li>When a client sends a GraphQL request to your Apigee proxy, the VerifyAPIKey policy checks for valid credentials.</li>
+                <li>The GraphQLValidation policy then parses the GraphQL payload, populating flow variables like `graphql.operation.type` (e.g., "query", "mutation") and `graphql.operation.name`. It also verifies the request against `myGraphQLSchema.graphql`, rejecting any requests that don't conform to your defined schema. It will also reject queries deeper than 8 levels or with more than 50 distinct fields.</li>
+                <li>Finally, depending on whether it's a query or mutation, different quota policies can be applied conditionally using those flow variables.</li>
+            </ol>
+            <p>This demonstrates how Apigee provides a powerful and flexible layer to manage, secure, and monitor your GraphQL APIs, offloading these concerns from your backend GraphQL server.</p>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="fixed bottom-4 right-4 bg-blue-700 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors duration-200 hidden">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+        </svg>
+    </button>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+                // Close sidebar on small screens after clicking a link
+                if (window.innerWidth < 1024) {
+                    document.getElementById('sidebar').classList.remove('open');
+                }
+            });
+        });
+
+        // Hamburger menu toggle
+        const hamburgerButton = document.getElementById('hamburger-button');
+        const sidebar = document.getElementById('sidebar');
+
+        hamburgerButton.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+
+        // Close sidebar if clicked outside (for small screens)
+        document.addEventListener('click', (event) => {
+            if (window.innerWidth < 1024 && !sidebar.contains(event.target) && !hamburgerButton.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Back to Top button functionality
+        const backToTopButton = document.getElementById('back-to-top');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) { // Show button after scrolling down 300px
+                backToTopButton.classList.remove('hidden');
+            } else {
+                backToTopButton.classList.add('hidden');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script>
+</body>
+</html>
